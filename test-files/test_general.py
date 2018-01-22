@@ -1,4 +1,4 @@
-from apprCpNet import *
+from ../learnCpNet import *
 from sys import *
 
 # arguments for python3 command line: numberOfRounds online[True or False] offline[True or False] decisionMode[1 or 2 or 3] decisionThresholdBis
