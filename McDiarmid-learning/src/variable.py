@@ -1,7 +1,5 @@
 import math as m
 import string as s
-# import numpy as np
-# from igraph import *
 from operator import attrgetter
 import random
 from utility import *
@@ -193,14 +191,6 @@ class Variable:
 				
 				self.time += self.preferences[1].counterForRule + self.preferences[1].counterForInversedRule + self.preferences[0].counterForRule + self.preferences[1].counterForInversedRule
 				
-				# if useDtBis:
-					# self.totalNumberOfRulesCounters += oldPreferences[-1].statsForRuleOne[par.id]+oldPreferences[-1].statsForInversedRuleOne[par.id] + oldPreferences[-1].statsForRuleZero[par.id]+oldPreferences[-1].statsForInversedRuleZero[par.id]
-					
-					# if self.preferences[1].counterForRule != 0 and self.preferences[1].counterForInversedRule != 0:
-						# self.currentInformationGain += ((self.preferences[1].counterForRule + self.preferences[1].counterForInversedRule)/self.totalNumberOfRulesCounters) * entropy(self.preferences[1].counterForRule, self.preferences[1].counterForInversedRule)
-					# if self.preferences[0].counterForRule != 0 and self.preferences[0].counterForInversedRule != 0:
-						# self.currentInformationGain += ((self.preferences[0].counterForRule + self.preferences[0].counterForInversedRule)/self.totalNumberOfRulesCounters) * entropy(self.preferences[0].counterForRule, self.preferences[0].counterForInversedRule)
-				
 				if oldPreferences[-1].statsForRuleOne[par.id] + oldPreferences[-1].statsForInversedRuleOne[par.id] != 0:
 					self.numberOfRules += 1
 				if oldPreferences[-1].statsForRuleZero[par.id] + oldPreferences[-1].statsForInversedRuleZero[par.id] != 0:
@@ -235,9 +225,6 @@ class Variable:
 				self.preferences[fromBinToInt(newVector0)] = Stats(self,oldPreferences[key].statsForRuleZero[par.id],oldPreferences[key].statsForInversedRuleZero[par.id])
 				
 				self.time += self.preferences[fromBinToInt(newVector1)].counterForRule + self.preferences[fromBinToInt(newVector1)].counterForInversedRule + self.preferences[fromBinToInt(newVector0)].counterForRule + self.preferences[fromBinToInt(newVector0)].counterForInversedRule
-				
-				# if useDtBis:
-					# self.totalNumberOfRulesCounters += oldPreferences[key].statsForRuleOne[par.id]+oldPreferences[key].statsForInversedRuleOne[par.id] + oldPreferences[key].statsForRuleZero[par.id]+oldPreferences[key].statsForInversedRuleZero[par.id]
 				
 				if oldPreferences[key].statsForRuleOne[par.id] + oldPreferences[key].statsForInversedRuleOne[par.id] != 0:
 					self.numberOfRules += 1
@@ -284,10 +271,6 @@ class Variable:
 			return True
 		return False
 	
-		# if len(self.preferences) != 0 and rule[0] in self.preferences and self.preferences[rule[0]] == rule[1]:
-			# return True
-		# return False
-	
 	# refresh conditionals preferences of current variable
 	def setPreferences(self, preferences):
 		self.preferences = {}
@@ -306,20 +289,3 @@ class Variable:
 			self.parents.append(par)
 		self.parents.sort()
 		self.setPreferences(preferences)
-	
-	# def addPreference(self, rule):
-		# self.preferences[rule[0]] = rule[1]
-	
-	# preferences is an hashmap his the value of parents in keys and the value of the variable in values
-	# def addPreferences(self, preferences):
-		# for rule in preferences:
-			# if len(self.parents) == 0:
-				# self.preferences[-1] = rule[1]
-			# self.preferences[rule[0]] = rule[1]
-		
-	# def parentsId(self):
-		# parentsId = []
-		# for par in self.parents:
-			# parentsId.append(par.id)
-		# return parentsId
-		

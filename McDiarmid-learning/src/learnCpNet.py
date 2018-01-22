@@ -50,11 +50,6 @@ def learningCPNetOnline(data,numberOfVar,dtBis,nbOfParents,lenOfData,convergence
 					m = max(tabInformationGain,key=lambda colonnes: colonnes[0])
 					if decisionBis(dtBis,N[n].getVariable(m[1]).meanInformationGainNonParent[m[2]],N[n].getVariable(m[1]).time):
 						N[n].addParentNewVersion(N[n].getVariable(m[1]),N[n].getVariable(m[2]),False,nbOfParents,autorizedCycle,decisionMode)
-						
-					# tabInformationGain.sort(key=lambda colonnes: colonnes[0],reverse=True)
-					# for elt in tabInformationGain:
-						# if decisionBis(dtBis,N[n].getVariable(elt[1]).meanInformationGainNonParent[elt[2]],N[n].getVariable(elt[1]).time) and N[n].addParentNewVersion(N[n].getVariable(elt[1]),N[n].getVariable(elt[2]),False,nbOfParents,autorizedCycle):
-							# break
 				
 			if convergence:
 				correctComp = 0
@@ -187,7 +182,7 @@ def learningCPNetOffline(data,numberOfVar,nbOfParents,lenOfData,convergence,conv
 
 	return N
 	
-def generalProcedure(m,bagging,fileName,numberOfComparisons,no,v,b,numberOfParents1,numberOfParents2,smooth,smooth2,dtBis,convergence,online,offline,decisionMode,data,autorizedCycle,foldValidation):
+def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numberOfParents2,smooth,smooth2,dtBis,convergence,online,offline,decisionMode,data,autorizedCycle,foldValidation):
 	if smooth == 0:
 		smooth = 1
 	if smooth2 == 0:
@@ -212,11 +207,6 @@ def generalProcedure(m,bagging,fileName,numberOfComparisons,no,v,b,numberOfParen
 		averageCycleSize2[n] = 0
 	
 	maxAccuracyBag = -1
-	
-	if bagging:
-		tBag = []
-		setOfBaggingCPNet = []
-		accBag = []
 
 	print()
 	
@@ -275,27 +265,6 @@ def generalProcedure(m,bagging,fileName,numberOfComparisons,no,v,b,numberOfParen
 					learnedCPNetOnline = learningCPNetOnline(dataTrain,dataset.numberOfAttributes,dtBis,numberOfParents2,dataset.lenOfFold,convergence,convergenceAccuracyOnline,no,computationTimeOnline,iterationTime,decisionMode,autorizedCycle)
 				else:
 					learnedCPNetOnline = learningCPNetOnline(dataset.data,dataset.numberOfAttributes,dtBis,numberOfParents2,dataset.lenOfData,convergence,convergenceAccuracyOnline,no,computationTimeOnline,iterationTime,decisionMode,autorizedCycle)
-
-			if bagging:				
-				data = dataset.data[:int(len(dataset.data)/smooth2)]
-				timeBeforeBag = time.clock()
-				learnedCPNetWithBagging = learningCPNet(data,dataset.numberOfAttributes,numberOfParents2,int(len(dataset.data)/smooth2))
-				setOfBaggingCPNet.append(learnedCPNetWithBagging)
-				timeAfterBag = time.clock()
-				ttBag = timeAfterBag - timeBeforeBag
-				
-				allCompBag = 0
-				correctCompBag = 0
-				for comparison in dataset.data:
-					allCompBag += 1
-					if learnedCPNetWithBagging.fitCPNet(learnedCPNetWithBagging.returnRule(learnedCPNetWithBagging.getVariable(comparison[2]),comparison[0],comparison[1])):
-						correctCompBag += 1
-				
-				accuracyBag = correctCompBag/allCompBag*100
-				accBag.append(accuracyBag)
-				if accuracyBag > maxAccuracyBag:
-					maxAccuracyBag = accuracyBag
-				tBag.append(ttBag)
 					
 			for n in no:
 				correctCompOnline = 0
@@ -345,23 +314,6 @@ def generalProcedure(m,bagging,fileName,numberOfComparisons,no,v,b,numberOfParen
 	
 	totalSmooth = smooth*smooth2
 	
-	if bagging:
-		meanAccBag = 0
-		meanTBag = 0		
-		for i in range(totalSmooth):
-			meanAccBag += accBag[i]
-			meanTBag += tBag[i]
-		meanAccBag /= totalSmooth
-		meanTBag /= totalSmooth
-		sdABag = 0
-		sdTBag = 0
-		if totalSmooth != 1:
-			for i in range(totalSmooth):
-				sdABag += (accBag[i] - meanAccBag)**2
-				sdTBag += (tBag[i] - meanTBag)**2
-				sdABag /= (totalSmooth - 1)
-				sdTBag /= (totalSmooth - 1)
-	
 	meanAccOnline = {}
 	meanAccNoiseOnline = {}
 	meanTOnline = {}
@@ -400,9 +352,6 @@ def generalProcedure(m,bagging,fileName,numberOfComparisons,no,v,b,numberOfParen
 			sdTOffline[n] = 0
 		
 		if online:
-			# for i in range(totalSmooth*dataset.lenOfData):
-				# meanIT[n] += iterationTime[n][i]
-			# meanIT[n] /= (totalSmooth*dataset.lenOfData)
 			for i in range(totalSmooth):
 				meanAccOnline[n] += accOnline[n][i]
 				meanAccNoiseOnline[n] += accNoiseOnline[n][i]
@@ -410,9 +359,6 @@ def generalProcedure(m,bagging,fileName,numberOfComparisons,no,v,b,numberOfParen
 			meanAccOnline[n] /= totalSmooth
 			meanAccNoiseOnline[n] /= totalSmooth
 			meanTOnline[n] /= totalSmooth
-			# for i in range(totalSmooth*dataset.lenOfData):
-				# sdIT[n] += (iterationTime[n][i] - meanIT[n])**2
-			# sdIT[n] /= (totalSmooth*dataset.lenOfData - 1)
 			for i in range(totalSmooth):
 				sdAOnline[n] += (accOnline[n][i] - meanAccOnline[n])**2
 				sdANoiseOnline[n] += (accNoiseOnline[n][i] - meanAccNoiseOnline[n])**2
@@ -506,7 +452,7 @@ def generalProcedure(m,bagging,fileName,numberOfComparisons,no,v,b,numberOfParen
 
 
 
-def displayParameters(modeForDatasetGeneration,bagging,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,lenOfData,numberOfAttributes,online):
+def displayParameters(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,lenOfData,numberOfAttributes,online):
 	if modeForDatasetGeneration == 1:
 		if online:
 			return "For the file " + nameOfFile + " (number of comparisons = " + str(lenOfData) + ", number of variables = " + str(numberOfAttributes) + "),\nnoise = " + str(percentageOfNoise) + "% of the database,\nwith " + str(numberOfParentsForLearnedCPNet) + " parents in the learned CPnet,\n" + str(numberOfRoundsForFileGeneration) + " x " + str(numberOfRoundsForLearningProcedure) + " rounds,\ndelta = " + str(decisionThresholdBis) + ".\n"

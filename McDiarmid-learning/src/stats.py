@@ -1,6 +1,5 @@
 from variable import *
 
-
 class Stats():
 	def __init__(self,var,counterForRule = 0,counterForInversedRule = 0, value = -1):
 		self.trueRule = value
