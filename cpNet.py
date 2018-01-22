@@ -88,10 +88,7 @@ class CPNet:
 		if len(self.candidateVariables) > 0:
 			for var in self.candidateVariables:
 				if var.time != 0:
-					if decisionMode == 3:
-						tabMax.append([var.id,var.currentInformationGain])
-					else:
-						tabMax.append([var.id,var.meanInformationGain/var.time])
+					tabMax.append([var.id,var.currentInformationGain])
 			if len(tabMax) > 0:
 				maxVar = max(tabMax,key=itemgetter(1))
 				# tabMax.remove(maxVar)
@@ -101,9 +98,6 @@ class CPNet:
 				# var = self.getVariable(maxVar2[0])
 				
 				if decisionMode == 1:
-					if maxVar[1] > epsilon(decTh,var.time):
-						return True,var
-				if decisionMode == 3:
 					# print(maxVar[1], epsilonMcDiarmid(decTh,var.time))
 					# if maxVar[1] <=  maxVar2[1] - 2*epsilonMcDiarmid(decTh,var.time):
 					# if maxVar[1] > 0.1:

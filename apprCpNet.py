@@ -33,9 +33,9 @@ def learningCPNetOnline(data,numberOfVar,dtBis,nbOfParents,lenOfData,convergence
 			swapVariable = N[n].getVariable(comparison[2])
 			rule = N[n].returnRule(swapVariable,comparison[0],comparison[1])[1:]
 			N[n].numberOfRules += 1
-			# Hoeffding bound
+			# McDiarmid bound
 			swapVariable.updateCPTableOnline(rule,comparison[0],swapVariable in N[n].candidateVariables,N[n].numberOfRules,decisionMode)
-			if decisionMode == 1 or decisionMode == 3:
+			if decisionMode == 1:
 				dec,candVariable = N[n].decision(dtBis,decisionMode)
 				if dec:
 					N[n].addParent(candVariable,False,decisionMode,nbOfParents,autorizedCycle)

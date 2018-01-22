@@ -24,20 +24,11 @@ class Variable:
 		self.alreadyTry = False
 		self.numberOfRules = 0
 		
-		self.meanInformationGain = 0.0
 		self.currentInformationGain = 0.0
-		self.meanInformationGainNonParent = {}
 		self.currentInformationGainNonParent = {}
 		
 		self.totalNumberOfRulesCounters = 0
 		self.time = 0
-		
-	
-	# def calcEntropy(self):
-		# entr = 0
-		# for pref in self.preferences.values():
-			# entr += ((pref.counterForRule + pref.counterForInversedRule)/self.totalNumberOfRulesCounters) * entropy(pref.counterForRule, pref.counterForInversedRule)
-		# return entr
 		
 	def __lt__(self,v):
 		return self.id < v.id
@@ -61,12 +52,6 @@ class Variable:
 						c = pref.statsForRuleOne[nonPar] + pref.statsForInversedRuleZero[nonPar]
 						cBar = pref.statsForRuleZero[nonPar] + pref.statsForInversedRuleOne[nonPar]
 						self.currentInformationGainNonParent[nonPar] += ((pref.counterForRule + pref.counterForInversedRule)/self.time) * (entropy(pref.counterForRule, pref.counterForInversedRule) - entropy(c, cBar))
-		self.meanInformationGain += self.currentInformationGain
-		if decisionMode == 2:
-			for nonPar in self.nonParents:
-				self.meanInformationGainNonParent[nonPar] += self.currentInformationGainNonParent[nonPar]
-		
-		# return self.currentInformationGain, self.currentInformationGainNonParent
 
 	def updateCPTableOnline(self,rule,outcome,canUse,totalRules,decisionMode):
 		self.time += 1
@@ -124,15 +109,12 @@ class Variable:
 		self.parents.sort()
 		self.nonParents.remove(par.id)
 		if decisionMode == 2:
-			del self.meanInformationGainNonParent[par.id]
 			del self.currentInformationGainNonParent[par.id]
-			for nonPar in self.nonParents:
-				self.meanInformationGainNonParent[nonPar] =	self.currentInformationGainNonParent[nonPar] = 0
+
 		self.preferences = {}
 		self.numberOfRules = 0
 		self.totalNumberOfRulesCounters = 0
 		self.currentInformationGain = 0.0
-		self.meanInformationGain = 0
 		
 		sub = 0
 		
@@ -189,15 +171,11 @@ class Variable:
 		self.parents.sort()
 		self.nonParents.remove(par.id)
 		if decisionMode == 2:
-			del self.meanInformationGainNonParent[par.id]
 			del self.currentInformationGainNonParent[par.id]
-			for nonPar in self.nonParents:
-				self.meanInformationGainNonParent[nonPar] =	self.currentInformationGainNonParent[nonPar] = 0
 		self.preferences = {}
 		self.numberOfRules = 0
 		self.totalNumberOfRulesCounters = 0
 		self.currentInformationGain = 0.0
-		self.meanInformationGain = 0.0
 		self.time = 0
 		
 		sub = 0
