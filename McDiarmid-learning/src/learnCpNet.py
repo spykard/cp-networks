@@ -140,7 +140,7 @@ def learningCPNetOffline(data,numberOfVar,nbOfParents,lenOfFold,convergence,conv
 					shuffle(item[1])
 				
 				# if all variables are pure, we stop
-				if varEntr[0][0] == 0:
+				if len(varEntr) == 0 or varEntr[0][0] == 0:
 					finish = True
 				# otherwise, we need to find a new parent variable (if it exists)
 				else:

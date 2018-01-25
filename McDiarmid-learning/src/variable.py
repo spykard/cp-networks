@@ -219,7 +219,7 @@ class Variable:
 						self.generalTableForMean[nonPar] += self.preferences[fromBinToInt(newVector1)].calcMax(nonPar,1,False) + self.preferences[fromBinToInt(newVector0)].calcMax(nonPar,1,False)
 		
 		newTotalRules = totalRules - sub + add
-		self.updateInformationGain(newTotalRules,decisionMode)
+		self.updateInformationGain(decisionMode)
 
 		return newTotalRules
 

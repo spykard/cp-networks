@@ -124,7 +124,7 @@ class CPNet:
 					self.candidateVariables.remove(var)
 				self.numberOfRules = var.addParentOnline(parentVariable,decisionMode,self.numberOfRules)
 				# self.numberOfRules = self.numberOfRules - sub + add
-				var.updateInformationGain(self.numberOfRules,decisionMode)
+				var.updateInformationGain(decisionMode)
 			return True
 		return False
 
@@ -163,7 +163,7 @@ class CPNet:
 					else:
 						self.numberOfRules = var.addParentOnline(self.getVariable(it),decisionMode,self.numberOfRules)
 						# self.numberOfRules = self.numberOfRules - sub + add
-						var.updateInformationGain(self.numberOfRules,decisionMode)
+						var.updateInformationGain(decisionMode)
 					return True
 		var.alreadyTry = True
 		self.candidateVariables.remove(var)

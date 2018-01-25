@@ -5,7 +5,7 @@ from src.learnCpNet import *
 print(argv[1],argv[2],argv[3],argv[4],argv[5])
 
 modeForDatasetGeneration = 2 # 1 = read a file, 2 = generate a synthetic database
-nameOfFile = "test_database.dat"
+nameOfFile = "databases/test_database.dat"
 numberOfComparisons = 10000 # -1 = all of the comparisons in file
 percentageOfNoise = [0,10,20,40] # between 0 and 50
 numberOfVariables = 12 # -1 = automatically choose from the number of comparisons
