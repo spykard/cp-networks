@@ -1,6 +1,6 @@
 import os.path
-from utility import *
-from cpNet import *
+from .utility import *
+from .cpNet import *
 from random import *
 from math import *
 

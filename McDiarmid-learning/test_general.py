@@ -1,12 +1,12 @@
-from ../learnCpNet import *
 from sys import *
+from src.learnCpNet import *
 
 # arguments for python3 command line: numberOfRounds online[True or False] offline[True or False] decisionMode[1 or 2 or 3] decisionThresholdBis
 print(argv[1],argv[2],argv[3],argv[4],argv[5])
 
 modeForDatasetGeneration = 2 # 1 = read a file, 2 = generate a synthetic database
 nameOfFile = "test_database.dat"
-numberOfComparisons = 1000000 # -1 = all of the comparisons in file
+numberOfComparisons = 10000 # -1 = all of the comparisons in file
 percentageOfNoise = [0,10,20,40] # between 0 and 50
 numberOfVariables = 12 # -1 = automatically choose from the number of comparisons
 numberOfEdgesLambda = -1 # -1 = infinity

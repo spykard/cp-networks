@@ -1,5 +1,5 @@
-from cpNet import *
-from database import *
+from .cpNet import *
+from .database import *
 import time
 from random import *
 from math import *
@@ -22,7 +22,6 @@ def learningCPNetOnline(data,numberOfVar,dtBis,nbOfParents,lenOfData,convergence
 					var.generalTableForMean[i] = 0
 			var.preferences[-1] = Stats(var,0,0)
 			for nonPar in var.nonParents:
-				var.meanInformationGainNonParent[nonPar] = 0
 				var.currentInformationGainNonParent[nonPar] = 0
 		
 		# learning procedure
@@ -45,10 +44,10 @@ def learningCPNetOnline(data,numberOfVar,dtBis,nbOfParents,lenOfData,convergence
 				for var in N[n].variables:
 					if var.currentInformationGain != 0 and (len(var.parents) < nbOfParents or nbOfParents == -1):
 						for nonPar in var.nonParents:
-							tabInformationGain.append([var.meanInformationGainNonParent[nonPar]/var.time,var.id,nonPar])
+							tabInformationGain.append([var.currentInformationGainNonParent[nonPar],var.id,nonPar])
 				if len(tabInformationGain) != 0:
 					m = max(tabInformationGain,key=lambda colonnes: colonnes[0])
-					if decisionBis(dtBis,N[n].getVariable(m[1]).meanInformationGainNonParent[m[2]],N[n].getVariable(m[1]).time):
+					if decisionBis(dtBis,N[n].getVariable(m[1]).currentInformationGainNonParent[m[2]],N[n].getVariable(m[1]).time):
 						N[n].addParentNewVersion(N[n].getVariable(m[1]),N[n].getVariable(m[2]),False,nbOfParents,autorizedCycle,decisionMode)
 				
 			if convergence:

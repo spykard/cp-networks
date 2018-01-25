@@ -1,4 +1,4 @@
-from variable import *
+from .variable import *
 from random import *
 from operator import itemgetter
 

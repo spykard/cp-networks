@@ -2,8 +2,8 @@ import math as m
 import string as s
 from operator import attrgetter
 import random
-from utility import *
-from stats import *
+from .utility import *
+from .stats import *
 	
 # a variable consists of
 # an id (unique), for instance 2
