@@ -25,7 +25,6 @@ class Variable:
 		self.currentInformationGain = 0.0
 		self.currentInformationGainNonParent = {}
 		
-		self.totalNumberOfRulesCounters = 0
 		self.time = 0
 		
 	def __lt__(self,v):
@@ -37,7 +36,7 @@ class Variable:
 			s += str(par.id) + ","
 		print(s + "]")
 		
-	def updateInformationGain(self,totalRules,decisionMode):
+	def updateInformationGain(self,decisionMode):
 		self.currentInformationGain = 0
 		if decisionMode == 2:
 			for key in self.currentInformationGainNonParent.keys():
@@ -51,12 +50,11 @@ class Variable:
 						cBar = pref.statsForRuleZero[nonPar] + pref.statsForInversedRuleOne[nonPar]
 						self.currentInformationGainNonParent[nonPar] += ((pref.counterForRule + pref.counterForInversedRule)/self.time) * (entropy(pref.counterForRule, pref.counterForInversedRule) - entropy(c, cBar))
 
-	def updateCPTableOnline(self,rule,outcome,canUse,totalRules,decisionMode):
+	def updateCPTable(self,rule,outcome,canUse,decisionMode):
 		self.time += 1
 		if self.preferences[rule[0]].trueRule == -1:
 			self.numberOfRules += 1
 		self.preferences[rule[0]].addOneToTheCounter(rule[1])
-		self.totalNumberOfRulesCounters += 1		
 		if canUse:
 			for nonPar in self.nonParents:
 				if decisionMode == 1:
@@ -73,32 +71,6 @@ class Variable:
 						self.preferences[rule[0]].statsForInversedRuleZero[nonPar] += 1
 				if decisionMode == 1:
 					self.generalTableForMean[nonPar] += self.preferences[rule[0]].calcMax(nonPar,rule[1],False)
-		if canUse:
-			self.updateInformationGain(totalRules,decisionMode)
-		
-		self.preferences[rule[0]].setTrueRule()
-	
-	def updateCPTableOffline(self,rule,outcome):
-		self.time += 1
-		if self.preferences[rule[0]].trueRule == -1:
-			self.numberOfRules += 1
-		self.preferences[rule[0]].addOneToTheCounter(rule[1])
-		self.totalNumberOfRulesCounters += 1
-		
-		for nonPar in self.nonParents:
-			self.generalTableForMean[nonPar] -= self.preferences[rule[0]].calcMax(nonPar,rule[1],True)
-			if outcome[nonPar] == 1:
-				if rule[1] == 1:
-					self.preferences[rule[0]].statsForRuleOne[nonPar] += 1
-				else:
-					self.preferences[rule[0]].statsForInversedRuleOne[nonPar] += 1
-			else:
-				if rule[1] == 1:
-					self.preferences[rule[0]].statsForRuleZero[nonPar] += 1
-				else:
-					self.preferences[rule[0]].statsForInversedRuleZero[nonPar] += 1
-			self.generalTableForMean[nonPar] += self.preferences[rule[0]].calcMax(nonPar,rule[1],False)
-		
 		self.preferences[rule[0]].setTrueRule()
 		
 	def addParentOffline(self,par,decisionMode):
@@ -111,7 +83,6 @@ class Variable:
 
 		self.preferences = {}
 		self.numberOfRules = 0
-		self.totalNumberOfRulesCounters = 0
 		self.currentInformationGain = 0.0
 		
 		sub = 0
@@ -172,7 +143,6 @@ class Variable:
 			del self.currentInformationGainNonParent[par.id]
 		self.preferences = {}
 		self.numberOfRules = 0
-		self.totalNumberOfRulesCounters = 0
 		self.currentInformationGain = 0.0
 		self.time = 0
 		

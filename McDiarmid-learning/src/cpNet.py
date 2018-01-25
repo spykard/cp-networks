@@ -80,7 +80,7 @@ class CPNet:
 		
 	def computeVariablesInformationGain(self,decisionMode):
 		for var in self.variables:
-			var.updateInformationGain(self.numberOfRules,decisionMode)
+			var.updateInformationGain(decisionMode)
 		
 	def decision(self,decTh,decisionMode):
 		tabMax = []
@@ -155,12 +155,12 @@ class CPNet:
 					self.updateCPGraph()
 				else:
 					var.parents.remove(self.getVariable(it))
+					if numberOfParents != -1 and len(var.parents)+1 >= numberOfParents:
+						self.candidateVariables.remove(var)
 					if useOffline:
 						sub = var.addParentOffline(self.getVariable(it),decisionMode)
 						self.numberOfRules = self.numberOfRules - sub
 					else:
-						if numberOfParents != -1 and len(var.parents)+1 >= numberOfParents:
-							self.candidateVariables.remove(var)
 						self.numberOfRules = var.addParentOnline(self.getVariable(it),decisionMode,self.numberOfRules)
 						# self.numberOfRules = self.numberOfRules - sub + add
 						var.updateInformationGain(self.numberOfRules,decisionMode)

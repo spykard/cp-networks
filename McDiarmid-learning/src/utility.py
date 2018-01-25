@@ -46,7 +46,7 @@ def setOfParentsValue(state,listOfParentsId):
 		listOfParentsValue[id] = state[i]
 	return listOfParentsValue
 	
-	
+# compute the scaled cross-entropy between c1 and c2
 def entropy(c1,c2):
 	if c1 == 0 or c2 == 0:
 		return 0

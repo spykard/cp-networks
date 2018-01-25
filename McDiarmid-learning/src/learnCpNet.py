@@ -4,7 +4,7 @@ import time
 from random import *
 from math import *
 
-def learningCPNetOnline(data,numberOfVar,dtBis,nbOfParents,lenOfData,convergence,convergenceAccuracyOnline,noise,computationTimeOnline,iterationTime,decisionMode,autorizedCycle):
+def learningCPNetOnline(data,numberOfVar,dtBis,nbOfParents,lenOfFold,convergence,convergenceAccuracyOnline,noise,computationTimeOnline,iterationTime,decisionMode,autorizedCycle):
 	N = {}
 	for n in noise:
 		shuffle(data[n])
@@ -33,7 +33,9 @@ def learningCPNetOnline(data,numberOfVar,dtBis,nbOfParents,lenOfData,convergence
 			rule = N[n].returnRule(swapVariable,comparison[0],comparison[1])[1:]
 			N[n].numberOfRules += 1
 			# McDiarmid bound
-			swapVariable.updateCPTableOnline(rule,comparison[0],swapVariable in N[n].candidateVariables,N[n].numberOfRules,decisionMode)
+			swapVariable.updateCPTable(rule,comparison[0],swapVariable in N[n].candidateVariables,decisionMode)
+			if swapVariable in N[n].candidateVariables:
+				swapVariable.updateInformationGain(decisionMode)
 			if decisionMode == 1:
 				dec,candVariable = N[n].decision(dtBis,decisionMode)
 				if dec:
@@ -55,7 +57,7 @@ def learningCPNetOnline(data,numberOfVar,dtBis,nbOfParents,lenOfData,convergence
 				for comparison in data[0]:
 					if N[n].fitCPNet(N[n].returnRule(N[n].getVariable(comparison[2]),comparison[0],comparison[1])):
 						correctComp += 1
-				convergenceAccuracyOnline[n][cpt].append(correctComp/lenOfData*100)
+				convergenceAccuracyOnline[n][cpt].append(correctComp/lenOfFold*100)
 				cpt += 1
 				
 			iterationTimeAfter = time.clock()
@@ -66,7 +68,7 @@ def learningCPNetOnline(data,numberOfVar,dtBis,nbOfParents,lenOfData,convergence
 
 	return N
 	
-def learningCPNetOffline(data,numberOfVar,nbOfParents,lenOfData,convergence,convergenceAccuracyOffline,noise,computationTimeOffline,decisionMode,autorizedCycle):
+def learningCPNetOffline(data,numberOfVar,nbOfParents,lenOfFold,convergence,convergenceAccuracyOffline,noise,computationTimeOffline,decisionMode,autorizedCycle):
 	N = {}
 	for n in noise:
 		
@@ -86,23 +88,21 @@ def learningCPNetOffline(data,numberOfVar,nbOfParents,lenOfData,convergence,conv
 					var.generalTableForMean[i] = 0
 			var.preferences[-1] = Stats(var,0,0)
 			for nonPar in var.nonParents:
-				var.meanInformationGainNonParent[nonPar] = 0
 				var.currentInformationGainNonParent[nonPar] = 0
 		
 		# learning procedure		
 		finish = False
-		completeAccuracy = False
 		
 		cpt = 0
 		
-		while not finish and not completeAccuracy:
+		while not finish:
 			N[n].numberOfRules = 0
 			
 			# browse the database
 			for comparison in data[n]:
 				swapVariable = N[n].getVariable(comparison[2])
 				rule = N[n].returnRule(swapVariable,comparison[0],comparison[1])[1:]
-				swapVariable.updateCPTableOffline(rule,comparison[0])
+				swapVariable.updateCPTable(rule,comparison[0],swapVariable in N[n].candidateVariables,decisionMode)
 				N[n].numberOfRules += 1
 			
 			# compute accuracy in case of convergence
@@ -113,9 +113,9 @@ def learningCPNetOffline(data,numberOfVar,nbOfParents,lenOfData,convergence,conv
 						correctComp += 1
 				
 				if len(convergenceAccuracyOffline[n]) <= cpt:
-					convergenceAccuracyOffline[n].append([correctComp/lenOfData*100])
+					convergenceAccuracyOffline[n].append([correctComp/lenOfFold*100])
 				else:
-					convergenceAccuracyOffline[n][cpt].append(correctComp/lenOfData*100)
+					convergenceAccuracyOffline[n][cpt].append(correctComp/lenOfFold*100)
 				cpt += 1
 			
 			# compute information gain variables
@@ -124,7 +124,7 @@ def learningCPNetOffline(data,numberOfVar,nbOfParents,lenOfData,convergence,conv
 			# looking for the best information gain
 			if decisionMode == 1:
 				varEntr = []
-				for var in N[n].variables:
+				for var in N[n].candidateVariables:
 					b = True
 					for i in range(len(varEntr)):
 						if varEntr[i][0] == var.currentInformationGain:
@@ -141,20 +141,18 @@ def learningCPNetOffline(data,numberOfVar,nbOfParents,lenOfData,convergence,conv
 				
 				# if all variables are pure, we stop
 				if varEntr[0][0] == 0:
-					completeAccuracy = True
+					finish = True
 				# otherwise, we need to find a new parent variable (if it exists)
 				else:
-					b = True
+					finish = True
 					for item in varEntr:
 						for it in item[1]:
 							if not N[n].getVariable(it).alreadyTry and (len(N[n].getVariable(it).parents) < nbOfParents or nbOfParents == -1):
 								if N[n].addParent(N[n].getVariable(it),True,decisionMode,nbOfParents,autorizedCycle):
-									b = False
+									finish = False
 									break
-						if not b:
+						if not finish:
 							break
-					if b:
-						finish = True
 
 			if decisionMode == 2:
 				tabInformationGain = []
@@ -163,25 +161,23 @@ def learningCPNetOffline(data,numberOfVar,nbOfParents,lenOfData,convergence,conv
 					if var.currentInformationGain != 0 and (len(var.parents) < nbOfParents or nbOfParents == -1):
 						infoMax = var.currentInformationGain
 						for nonPar in var.nonParents:
-							tabInformationGain.append([var.currentInformationGainNonParent[nonPar]/var.time,var.id,nonPar])
+							tabInformationGain.append([var.currentInformationGainNonParent[nonPar],var.id,nonPar])
 				if infoMax == 0:
-					completeAccuracy = True
+					finish = True
 				else:
 					tabInformationGain.sort(key=lambda colonnes: colonnes[0],reverse=True)
-					b = True
+					finish = True
 					for elt in tabInformationGain:
 						if N[n].addParentNewVersion(N[n].getVariable(elt[1]),N[n].getVariable(elt[2]),True,nbOfParents,autorizedCycle,decisionMode):
-							b = False
-							break
-					if b:
-						finish = True							
+							finish = False
+							break							
 						
 		timeAfter = time.clock()
 		computationTimeOffline[n].append(timeAfter - timeBefore)
 
 	return N
 	
-def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numberOfParents2,smooth,smooth2,dtBis,convergence,online,offline,decisionMode,data,autorizedCycle,foldValidation):
+def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numberOfParents2,smooth,smooth2,dtBis,convergence,online,offline,decisionMode,data,autorizedCycle):
 	if smooth == 0:
 		smooth = 1
 	if smooth2 == 0:
@@ -214,7 +210,7 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 			if numberOfComparisons == -1 and m == 2:
 				numberOfComparisons = int(input("Enter a number of comparaisons: "))
 				print()
-			dataset = Database(foldValidation, i+1, smooth, mode = m, filename = fileName, nC = numberOfComparisons, noise = no, nbV = v,lb = b,nbP = numberOfParents1, k = smooth2)
+			dataset = Database(i+1, smooth, mode = m, filename = fileName, nC = numberOfComparisons, noise = no, nbV = v,lb = b,nbP = numberOfParents1, k = smooth2)
 		else:
 			dataset = data
 			
@@ -224,7 +220,7 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 		if i == 0:
 			for n in no:
 				if online:
-					convergenceAccuracyOnline[n] = [[] for i in range(dataset.lenOfData)]
+					convergenceAccuracyOnline[n] = [[] for i in range(dataset.lenOfFold)]
 					computationTimeOnline[n] = []
 					iterationTime[n] = []
 					accOnline[n] = []
@@ -236,10 +232,12 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 					accNoiseOffline[n] = []
 		
 		for j in range(smooth2):
-			if foldValidation:
-				dataTest = {}
-				dataTrain = {}
-				for n in no:
+			dataTest = {}
+			dataTrain = {}
+			for n in no:
+				if smooth2 == 1:
+					dataTest[n] = dataTrain[n] = [swap for swap in dataset.dataFold[0][n]]
+				else:
 					dataTest[n] = [swap for swap in dataset.dataFold[j][n]]
 					dataTrain[n] = []
 					for other in range(smooth2):
@@ -250,66 +248,39 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 					print("\tsubstep " + str(2 * j + 1) + "/" + str(2*smooth2) + ":\t\tOFFLINE learning phase in progress...")
 				else:
 					print("\tsubstep " + str(j + 1) + "/" + str(smooth2) + ":\t\tOFFLINE learning phase in progress...")
-				if foldValidation:
-					learnedCPNetOffline = learningCPNetOffline(dataTrain,dataset.numberOfAttributes,numberOfParents2,dataset.lenOfFold,convergence,convergenceAccuracyOffline,no,computationTimeOffline,decisionMode,autorizedCycle)
-				else:
-					learnedCPNetOffline = learningCPNetOffline(dataset.data,dataset.numberOfAttributes,numberOfParents2,dataset.lenOfData,convergence,convergenceAccuracyOffline,no,computationTimeOffline,decisionMode,autorizedCycle)
+				learnedCPNetOffline = learningCPNetOffline(dataTrain,dataset.numberOfAttributes,numberOfParents2,dataset.lenOfFold,convergence,convergenceAccuracyOffline,no,computationTimeOffline,decisionMode,autorizedCycle)
 		
 			if online:
 				if offline:
 					print("\tsubstep " + str(2 * j + 2) + "/" + str(2*smooth2) + ":\t\tONLINE learning phase in progress...")
 				else:
 					print("\tsubstep " + str(j + 1) + "/" + str(smooth2) + ":\t\tONLINE learning phase in progress...")
-				if foldValidation:
-					learnedCPNetOnline = learningCPNetOnline(dataTrain,dataset.numberOfAttributes,dtBis,numberOfParents2,dataset.lenOfFold,convergence,convergenceAccuracyOnline,no,computationTimeOnline,iterationTime,decisionMode,autorizedCycle)
-				else:
-					learnedCPNetOnline = learningCPNetOnline(dataset.data,dataset.numberOfAttributes,dtBis,numberOfParents2,dataset.lenOfData,convergence,convergenceAccuracyOnline,no,computationTimeOnline,iterationTime,decisionMode,autorizedCycle)
-					
+				learnedCPNetOnline = learningCPNetOnline(dataTrain,dataset.numberOfAttributes,dtBis,numberOfParents2,dataset.lenOfFold,convergence,convergenceAccuracyOnline,no,computationTimeOnline,iterationTime,decisionMode,autorizedCycle)
+			
+			print("\t\t\t\ttest phase in progress...")
 			for n in no:
 				correctCompOnline = 0
 				correctCompOffline = 0
-				if foldValidation:
-					for comparison in dataTest[n]:
-						if online and learnedCPNetOnline[n].fitCPNet(learnedCPNetOnline[n].returnRule(learnedCPNetOnline[n].getVariable(comparison[2]),comparison[0],comparison[1])):
-							correctCompOnline += 1
-						if offline and learnedCPNetOffline[n].fitCPNet(learnedCPNetOffline[n].returnRule(learnedCPNetOffline[n].getVariable(comparison[2]),comparison[0],comparison[1])):
-							correctCompOffline += 1
-				else:
-					for comparison in dataset.data[n]:
-						if online and learnedCPNetOnline[n].fitCPNet(learnedCPNetOnline[n].returnRule(learnedCPNetOnline[n].getVariable(comparison[2]),comparison[0],comparison[1])):
-							correctCompOnline += 1
-						if offline and learnedCPNetOffline[n].fitCPNet(learnedCPNetOffline[n].returnRule(learnedCPNetOffline[n].getVariable(comparison[2]),comparison[0],comparison[1])):
-							correctCompOffline += 1
+				for comparison in dataTest[n]:
+					if online and learnedCPNetOnline[n].fitCPNet(learnedCPNetOnline[n].returnRule(learnedCPNetOnline[n].getVariable(comparison[2]),comparison[0],comparison[1])):
+						correctCompOnline += 1
+					if offline and learnedCPNetOffline[n].fitCPNet(learnedCPNetOffline[n].returnRule(learnedCPNetOffline[n].getVariable(comparison[2]),comparison[0],comparison[1])):
+						correctCompOffline += 1
 						
 				correctCompNoiseOnline = 0
 				correctCompNoiseOffline = 0
-				if foldValidation:
-					for comparison in dataTest[0]:
-						if online and learnedCPNetOnline[n].fitCPNet(learnedCPNetOnline[n].returnRule(learnedCPNetOnline[n].getVariable(comparison[2]),comparison[0],comparison[1])):
-							correctCompNoiseOnline += 1
-						if offline and learnedCPNetOffline[n].fitCPNet(learnedCPNetOffline[n].returnRule(learnedCPNetOffline[n].getVariable(comparison[2]),comparison[0],comparison[1])):
-							correctCompNoiseOffline += 1
-				else:
-					for comparison in dataset.data[0]:
-						if online and learnedCPNetOnline[n].fitCPNet(learnedCPNetOnline[n].returnRule(learnedCPNetOnline[n].getVariable(comparison[2]),comparison[0],comparison[1])):
-							correctCompNoiseOnline += 1
-						if offline and learnedCPNetOffline[n].fitCPNet(learnedCPNetOffline[n].returnRule(learnedCPNetOffline[n].getVariable(comparison[2]),comparison[0],comparison[1])):
-							correctCompNoiseOffline += 1
+				for comparison in dataTest[0]:
+					if online and learnedCPNetOnline[n].fitCPNet(learnedCPNetOnline[n].returnRule(learnedCPNetOnline[n].getVariable(comparison[2]),comparison[0],comparison[1])):
+						correctCompNoiseOnline += 1
+					if offline and learnedCPNetOffline[n].fitCPNet(learnedCPNetOffline[n].returnRule(learnedCPNetOffline[n].getVariable(comparison[2]),comparison[0],comparison[1])):
+						correctCompNoiseOffline += 1
 				
 				if online:
-					if foldValidation:
-						accOnline[n].append(correctCompOnline/dataset.lenOfFold*100)
-						accNoiseOnline[n].append(correctCompNoiseOnline/dataset.lenOfFold*100)
-					else:
-						accOnline[n].append(correctCompOnline/dataset.lenOfData*100)
-						accNoiseOnline[n].append(correctCompNoiseOnline/dataset.lenOfData*100)
+					accOnline[n].append(correctCompOnline/dataset.lenOfFold*100)
+					accNoiseOnline[n].append(correctCompNoiseOnline/dataset.lenOfFold*100)
 				if offline:
-					if foldValidation:
-						accOffline[n].append(correctCompOffline/dataset.lenOfFold*100)
-						accNoiseOffline[n].append(correctCompNoiseOffline/dataset.lenOfFold*100)
-					else:
-						accOffline[n].append(correctCompOffline/dataset.lenOfData*100)
-						accNoiseOffline[n].append(correctCompNoiseOffline/dataset.lenOfData*100)
+					accOffline[n].append(correctCompOffline/dataset.lenOfFold*100)
+					accNoiseOffline[n].append(correctCompNoiseOffline/dataset.lenOfFold*100)
 	
 	totalSmooth = smooth*smooth2
 	
@@ -408,8 +379,8 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 			
 		for n in no:
 			if online:
-				meanConvergenceAccuracyOnline[n] = [0 for i in range(dataset.lenOfData)]
-				sdConvergenceAccuracyOnline[n] = [0 for i in range(dataset.lenOfData)]
+				meanConvergenceAccuracyOnline[n] = [0 for i in range(dataset.lenOfFold)]
+				sdConvergenceAccuracyOnline[n] = [0 for i in range(dataset.lenOfFold)]
 				for j in range(len(meanConvergenceAccuracyOnline[n])):
 					for i in range(totalSmooth):
 						meanConvergenceAccuracyOnline[n][j] += convergenceAccuracyOnline[n][j][i]
@@ -445,49 +416,37 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 		learnedCPNetOffline[no[0]].displayCPNetInfo()
 		print()
 	
-	return averageCycleSize2,meanAccOnline,sdAOnline,meanAccOffline,sdAOffline,meanTOnline,sdTOnline,meanIT,sdIT,meanTOffline,sdTOffline,meanAccNoiseOnline,sdANoiseOnline,meanAccNoiseOffline,sdANoiseOffline,dataset.lenOfData,dataset.lenOfFold,dataset.numberOfAttributes,meanConvergenceAccuracyOnline,sdConvergenceAccuracyOnline,meanConvergenceAccuracyOffline,sdConvergenceAccuracyOffline
+	return averageCycleSize2,meanAccOnline,sdAOnline,meanAccOffline,sdAOffline,meanTOnline,sdTOnline,meanIT,sdIT,meanTOffline,sdTOffline,meanAccNoiseOnline,sdANoiseOnline,meanAccNoiseOffline,sdANoiseOffline,dataset.lenOfFold,dataset.numberOfAttributes,meanConvergenceAccuracyOnline,sdConvergenceAccuracyOnline,meanConvergenceAccuracyOffline,sdConvergenceAccuracyOffline
 
 
 
 
 
-def displayParameters(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,lenOfData,numberOfAttributes,online):
+def displayParameters(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,lenOfFold,numberOfAttributes,online):
 	if modeForDatasetGeneration == 1:
 		if online:
-			return "For the file " + nameOfFile + " (number of comparisons = " + str(lenOfData) + ", number of variables = " + str(numberOfAttributes) + "),\nnoise = " + str(percentageOfNoise) + "% of the database,\nwith " + str(numberOfParentsForLearnedCPNet) + " parents in the learned CPnet,\n" + str(numberOfRoundsForFileGeneration) + " x " + str(numberOfRoundsForLearningProcedure) + " rounds,\ndelta = " + str(decisionThresholdBis) + ".\n"
+			return "For the file " + nameOfFile + " (number of comparisons = " + str(lenOfFold) + " per fold, number of variables = " + str(numberOfAttributes) + "),\nnoise = " + str(percentageOfNoise) + "% of the database,\nwith " + str(numberOfParentsForLearnedCPNet) + " parents in the learned CPnet,\n" + str(numberOfRoundsForFileGeneration) + " x " + str(numberOfRoundsForLearningProcedure) + " folds,\ndelta = " + str(decisionThresholdBis) + ".\n"
 		else:
-			return "For the file " + nameOfFile + " (number of comparisons = " + str(lenOfData) + ", number of variables = " + str(numberOfAttributes) + "),\nnoise = " + str(percentageOfNoise) + "% of the database,\nwith " + str(numberOfParentsForLearnedCPNet) + " parents in the learned CPnet,\n" + str(numberOfRoundsForFileGeneration) + " rounds.\n"
+			return "For the file " + nameOfFile + " (number of comparisons = " + str(lenOfFold) + " per fold, number of variables = " + str(numberOfAttributes) + "),\nnoise = " + str(percentageOfNoise) + "% of the database,\nwith " + str(numberOfParentsForLearnedCPNet) + " parents in the learned CPnet,\n" + str(numberOfRoundsForFileGeneration) + " x " + str(numberOfRoundsForLearningProcedure) + " folds.\n"
 	if modeForDatasetGeneration == 2:
 		if online:
-			return "For a random database (number of comparisons = " + str(lenOfData) + "),\ngenerate from a random CPnet (number of variables = " + str(numberOfAttributes) + ", number of parents = " + str(numberOfParentsForTargetCPNet) + ", lambda = " + str(numberOfEdgesLambda) + "),\nnoise = " + str(percentageOfNoise) + "% of the database,\nwith " + str(numberOfParentsForLearnedCPNet) + " parents in the learned CPnet,\n" + str(numberOfRoundsForFileGeneration) + " x " + str(numberOfRoundsForLearningProcedure) + " rounds,\ndelta = " + str(decisionThresholdBis) + ".\n"
+			return "For a random database (number of comparisons = " + str(lenOfFold) + " per fold),\ngenerate from a random CPnet (number of variables = " + str(numberOfAttributes) + ", number of parents = " + str(numberOfParentsForTargetCPNet) + ", lambda = " + str(numberOfEdgesLambda) + "),\nnoise = " + str(percentageOfNoise) + "% of the database,\nwith " + str(numberOfParentsForLearnedCPNet) + " parents in the learned CPnet,\n" + str(numberOfRoundsForFileGeneration) + " x " + str(numberOfRoundsForLearningProcedure) + " folds,\ndelta = " + str(decisionThresholdBis) + ".\n"
 		else:
-			return "For a random database (number of comparisons = " + str(lenOfData) + "),\ngenerate from a random CPnet (number of variables = " + str(numberOfAttributes) + ", number of parents = " + str(numberOfParentsForTargetCPNet) + ", lambda = " + str(numberOfEdgesLambda) + "),\nnoise = " + str(percentageOfNoise) + "% of the database,\nwith " + str(numberOfParentsForLearnedCPNet) + " parents in the learned CPnet,\n" + str(numberOfRoundsForFileGeneration) + " rounds.\n"
+			return "For a random database (number of comparisons = " + str(lenOfFold) + " per fold),\ngenerate from a random CPnet (number of variables = " + str(numberOfAttributes) + ", number of parents = " + str(numberOfParentsForTargetCPNet) + ", lambda = " + str(numberOfEdgesLambda) + "),\nnoise = " + str(percentageOfNoise) + "% of the database,\nwith " + str(numberOfParentsForLearnedCPNet) + " parents in the learned CPnet,\n" + str(numberOfRoundsForFileGeneration) + " x " + str(numberOfRoundsForLearningProcedure) + " folds.\n"
 		
-def displayResults(modeForDatasetGeneration,averageCycleSize2,percentageOfNoise,aOnline,sdAOnline,aOffline,sdAOffline,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOffline,lenOfData,lenOfFold,online,offline,text,foldValidation):
+def displayResults(modeForDatasetGeneration,averageCycleSize2,percentageOfNoise,aOnline,sdAOnline,aOffline,sdAOffline,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOffline,lenOfFold,online,offline,text):
 	s = text + ""
 	if percentageOfNoise != [0]:
 		for n in percentageOfNoise:
 			s += "\n"
 			if online:
-				if foldValidation:
-					s += "For noise = " + str(n) + "% (" + str(round(averageCycleSize2[n],2)) + "% of cycles of size 2),\nwe obtain for the ONLINE version:\n" + str(round(aOnline[n],2)) + "% of agreement *" + str(int(aOnline[n]/100*lenOfFold)) + "/" + str(lenOfFold) + " comparisons* (sd = " + str(round(sdAOnline[n],2)) + "%),\naccuracy for unnoised dataset: " + str(meanAccNoiseOnline[n]) + "% (difference with actual noised dataset: " + str(round(meanAccNoiseOnline[0] - meanAccNoiseOnline[n],1)) + "),\ncomputation takes " + str(round(tOnline[n],4)) + " seconds (sd = " + str(round(sdTOnline[n],4)) + " seconds),\nthe computation of one iteration takes " + str(round(meanIT[n]*1000,4)) + " milliseconds (sd = " + str(round(sdIT[n]*1000,4)) + " milliseconds).\n"
-				else:
-					s += "For noise = " + str(n) + "% (" + str(round(averageCycleSize2[n],2)) + "% of cycles of size 2),\nwe obtain for the ONLINE version:\n" + str(round(aOnline[n],2)) + "% of agreement *" + str(int(aOnline[n]/100*lenOfData)) + "/" + str(lenOfData) + " comparisons* (sd = " + str(round(sdAOnline[n],2)) + "%),\naccuracy for unnoised dataset: " + str(meanAccNoiseOnline[n]) + "% (difference with actual noised dataset: " + str(round(meanAccNoiseOnline[0] - meanAccNoiseOnline[n],1)) + "),\ncomputation takes " + str(round(tOnline[n],4)) + " seconds (sd = " + str(round(sdTOnline[n],4)) + " seconds),\nthe computation of one iteration takes " + str(round(meanIT[n]*1000,4)) + " milliseconds (sd = " + str(round(sdIT[n]*1000,4)) + " milliseconds).\n"
+				s += "For noise = " + str(n) + "% (" + str(round(averageCycleSize2[n],2)) + "% of cycles of size 2),\nwe obtain for the ONLINE version:\n" + str(round(aOnline[n],2)) + "% of agreement *" + str(int(aOnline[n]/100*lenOfFold)) + "/" + str(lenOfFold) + " comparisons* (sd = " + str(round(sdAOnline[n],2)) + "%),\naccuracy for unnoised dataset: " + str(meanAccNoiseOnline[n]) + "% (difference with actual noised dataset: " + str(round(meanAccNoiseOnline[0] - meanAccNoiseOnline[n],1)) + "),\ncomputation takes " + str(round(tOnline[n],4)) + " seconds (sd = " + str(round(sdTOnline[n],4)) + " seconds),\nthe computation of one iteration takes " + str(round(meanIT[n]*1000,4)) + " milliseconds (sd = " + str(round(sdIT[n]*1000,4)) + " milliseconds).\n"
 			if offline:
-				if foldValidation:
-					s += "For noise = " + str(n) + "% (" + str(round(averageCycleSize2[n],2)) + "% of cycles of size 2),\nwe obtain for the OFFLINE version:\n" + str(round(aOffline[n],2)) + "% of agreement *" + str(int(aOffline[n]/100*lenOfFold)) + "/" + str(lenOfFold) + " comparisons* (sd = " + str(round(sdAOffline[n],2)) + "%),\naccuracy for unnoised dataset: " + str(meanAccNoiseOffline[n]) + "% (difference with actual noised dataset: " + str(round(meanAccNoiseOffline[0] - meanAccNoiseOffline[n],1)) + "),\ncomputation takes " + str(round(tOffline[n],4)) + " seconds (sd = " + str(round(sdTOffline[n],4)) + " seconds).\n"
-				else:
-					s += "For noise = " + str(n) + "% (" + str(round(averageCycleSize2[n],2)) + "% of cycles of size 2),\nwe obtain for the OFFLINE version:\n" + str(round(aOffline[n],2)) + "% of agreement *" + str(int(aOffline[n]/100*lenOfData)) + "/" + str(lenOfData) + " comparisons* (sd = " + str(round(sdAOffline[n],2)) + "%),\naccuracy for unnoised dataset: " + str(meanAccNoiseOffline[n]) + "% (difference with actual noised dataset: " + str(round(meanAccNoiseOffline[0] - meanAccNoiseOffline[n],1)) + "),\ncomputation takes " + str(round(tOffline[n],4)) + " seconds (sd = " + str(round(sdTOffline[n],4)) + " seconds).\n"
+				s += "For noise = " + str(n) + "% (" + str(round(averageCycleSize2[n],2)) + "% of cycles of size 2),\nwe obtain for the OFFLINE version:\n" + str(round(aOffline[n],2)) + "% of agreement *" + str(int(aOffline[n]/100*lenOfFold)) + "/" + str(lenOfFold) + " comparisons* (sd = " + str(round(sdAOffline[n],2)) + "%),\naccuracy for unnoised dataset: " + str(meanAccNoiseOffline[n]) + "% (difference with actual noised dataset: " + str(round(meanAccNoiseOffline[0] - meanAccNoiseOffline[n],1)) + "),\ncomputation takes " + str(round(tOffline[n],4)) + " seconds (sd = " + str(round(sdTOffline[n],4)) + " seconds).\n"
 	else:
 		
 		if online:
-			if foldValidation:
-				s += "We obtain for the ONLINE version:\n" + str(round(aOnline[0],2)) + "% of agreement *" + str(int(aOnline[0]/100*lenOfFold)) + "/" + str(lenOfFold) + " comparisons* (sd = " + str(round(sdAOnline[0],2)) + "%),\ncomputation takes " + str(round(tOnline[0],4)) + " seconds (sd = " + str(round(sdTOnline[0],4)) + " seconds),\nthe computation of one iteration takes " + str(round(meanIT[0]*1000,4)) + " milliseconds (sd = " + str(round(sdIT[0]*1000,4)) + " milliseconds).\n"
-			else:
-				s += "We obtain for the ONLINE version:\n" + str(round(aOnline[0],2)) + "% of agreement *" + str(int(aOnline[0]/100*lenOfData)) + "/" + str(lenOfData) + " comparisons* (sd = " + str(round(sdAOnline[0],2)) + "%),\ncomputation takes " + str(round(tOnline[0],4)) + " seconds (sd = " + str(round(sdTOnline[0],4)) + " seconds),\nthe computation of one iteration takes " + str(round(meanIT[0]*1000,4)) + " milliseconds (sd = " + str(round(sdIT[0]*1000,4)) + " milliseconds).\n"
+			s += "We obtain for the ONLINE version:\n" + str(round(aOnline[0],2)) + "% of agreement *" + str(int(aOnline[0]/100*lenOfFold)) + "/" + str(lenOfFold) + " comparisons* (sd = " + str(round(sdAOnline[0],2)) + "%),\ncomputation takes " + str(round(tOnline[0],4)) + " seconds (sd = " + str(round(sdTOnline[0],4)) + " seconds),\nthe computation of one iteration takes " + str(round(meanIT[0]*1000,4)) + " milliseconds (sd = " + str(round(sdIT[0]*1000,4)) + " milliseconds).\n"
 		if offline:
-			if foldValidation:
-				s += "We obtain for the OFFLINE version:\n" + str(round(aOffline[0],2)) + "% of agreement *" + str(int(aOffline[0]/100*lenOfFold)) + "/" + str(lenOfFold) + " comparisons* (sd = " + str(round(sdAOffline[0],2)) + "%),\ncomputation takes " + str(round(tOffline[0],4)) + " seconds (sd = " + str(round(sdTOffline[0],4)) + " seconds).\n"
-			else:
-				s += "We obtain for the OFFLINE version:\n" + str(round(aOffline[0],2)) + "% of agreement *" + str(int(aOffline[0]/100*lenOfData)) + "/" + str(lenOfData) + " comparisons* (sd = " + str(round(sdAOffline[0],2)) + "%),\ncomputation takes " + str(round(tOffline[0],4)) + " seconds (sd = " + str(round(sdTOffline[0],4)) + " seconds).\n"
+			s += "We obtain for the OFFLINE version:\n" + str(round(aOffline[0],2)) + "% of agreement *" + str(int(aOffline[0]/100*lenOfFold)) + "/" + str(lenOfFold) + " comparisons* (sd = " + str(round(sdAOffline[0],2)) + "%),\ncomputation takes " + str(round(tOffline[0],4)) + " seconds (sd = " + str(round(sdTOffline[0],4)) + " seconds).\n"
 	return s
