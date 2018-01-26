@@ -9,4 +9,4 @@ You can use the test files in the project root to use the algorithms. You can us
 in the datasets. You also can generate a random database with noise.
 
 I am sorry for this short readme for the moment, it correspond to my actual work as a Ph.D student in computer science.
-More informations will be available soon !
+More informations will be available soon!
