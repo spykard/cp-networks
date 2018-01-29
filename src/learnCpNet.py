@@ -4,7 +4,7 @@ import time
 from random import *
 from math import *
 
-def learningCPNetOnline(data,numberOfVar,dtBis,nbOfParents,lenOfFold,convergence,convergenceAccuracyOnline,noise,computationTimeOnline,iterationTime,decisionMode,autorizedCycle):
+def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,nbOfParents,lenOfFold,convergence,convergenceAccuracyOnline,noise,computationTimeOnline,iterationTime,decisionMode,autorizedCycle):
 	N = {}
 	for n in noise:
 		shuffle(data[n])
@@ -54,7 +54,7 @@ def learningCPNetOnline(data,numberOfVar,dtBis,nbOfParents,lenOfFold,convergence
 				
 			if convergence:
 				correctComp = 0
-				for comparison in data[0]:
+				for comparison in dataTestForConv[0]:
 					if N[n].fitCPNet(N[n].returnRule(N[n].getVariable(comparison[2]),comparison[0],comparison[1])):
 						correctComp += 1
 				convergenceAccuracyOnline[n][cpt].append(correctComp/lenOfFold*100)
@@ -68,7 +68,7 @@ def learningCPNetOnline(data,numberOfVar,dtBis,nbOfParents,lenOfFold,convergence
 
 	return N
 	
-def learningCPNetOffline(data,numberOfVar,nbOfParents,lenOfFold,convergence,convergenceAccuracyOffline,noise,computationTimeOffline,decisionMode,autorizedCycle):
+def learningCPNetOffline(data,dataTestForConv,numberOfVar,nbOfParents,lenOfFold,convergence,convergenceAccuracyOffline,noise,computationTimeOffline,decisionMode,autorizedCycle):
 	N = {}
 	for n in noise:
 		
@@ -108,7 +108,7 @@ def learningCPNetOffline(data,numberOfVar,nbOfParents,lenOfFold,convergence,conv
 			# compute accuracy in case of convergence
 			if convergence:
 				correctComp = 0
-				for comparison in data[0]:
+				for comparison in dataTestForConv[0]:
 					if N[n].fitCPNet(N[n].returnRule(N[n].getVariable(comparison[2]),comparison[0],comparison[1])):
 						correctComp += 1
 				
@@ -153,7 +153,8 @@ def learningCPNetOffline(data,numberOfVar,nbOfParents,lenOfFold,convergence,conv
 									break
 						if not finish:
 							break
-
+			
+			# use entropy for searching a couple (conditioned,parent) variables
 			if decisionMode == 2:
 				tabInformationGain = []
 				infoMax = 0
@@ -248,14 +249,14 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 					print("\tsubstep " + str(2 * j + 1) + "/" + str(2*smooth2) + ":\t\tOFFLINE learning phase in progress...")
 				else:
 					print("\tsubstep " + str(j + 1) + "/" + str(smooth2) + ":\t\tOFFLINE learning phase in progress...")
-				learnedCPNetOffline = learningCPNetOffline(dataTrain,dataset.numberOfAttributes,numberOfParents2,dataset.lenOfFold,convergence,convergenceAccuracyOffline,no,computationTimeOffline,decisionMode,autorizedCycle)
+				learnedCPNetOffline = learningCPNetOffline(dataTrain,dataTest,dataset.numberOfAttributes,numberOfParents2,dataset.lenOfFold,convergence,convergenceAccuracyOffline,no,computationTimeOffline,decisionMode,autorizedCycle)
 		
 			if online:
 				if offline:
 					print("\tsubstep " + str(2 * j + 2) + "/" + str(2*smooth2) + ":\t\tONLINE learning phase in progress...")
 				else:
 					print("\tsubstep " + str(j + 1) + "/" + str(smooth2) + ":\t\tONLINE learning phase in progress...")
-				learnedCPNetOnline = learningCPNetOnline(dataTrain,dataset.numberOfAttributes,dtBis,numberOfParents2,dataset.lenOfFold,convergence,convergenceAccuracyOnline,no,computationTimeOnline,iterationTime,decisionMode,autorizedCycle)
+				learnedCPNetOnline = learningCPNetOnline(dataTrain,dataTest,dataset.numberOfAttributes,dtBis,numberOfParents2,dataset.lenOfFold,convergence,convergenceAccuracyOnline,no,computationTimeOnline,iterationTime,decisionMode,autorizedCycle)
 			
 			print("\t\t\t\ttest phase in progress...")
 			for n in no:
