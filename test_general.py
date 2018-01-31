@@ -1,12 +1,12 @@
 from sys import *
 from src.learnCPnet import *
 
-# arguments for python3 command line: numberOfRounds online[True or False] offline[True or False] decisionMode[1 or 2] decisionThresholdBis
-print(argv[1],argv[2],argv[3],argv[4],argv[5])
+# arguments for python3 command line: numberOfRounds online[True or False] offline[True or False] decisionMode[1 or 2] decisionThresholdBis numberOfComparisons
+print(argv[1],argv[2],argv[3],argv[4],argv[5],argv[6])
 
 modeForDatasetGeneration = 2 # 1 = read a file, 2 = generate a synthetic database
 nameOfFile = "databases/test_database.dat"
-numberOfComparisons = 2000000 # -1 = all of the comparisons in file
+numberOfComparisons = int(argv[6]) # -1 = all of the comparisons in file
 percentageOfNoise = [0] # between 0 and 50
 numberOfVariables = 12 # -1 = automatically choose from the number of comparisons
 numberOfEdgesLambda = -1 # -1 = infinity

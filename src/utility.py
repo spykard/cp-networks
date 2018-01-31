@@ -55,7 +55,8 @@ def entropy(c1,c2):
 def epsilonMcDiarmid(decTh,n):
 	if decTh == 0:
 		return 0
-	return m.log(n)*m.sqrt((2/n)*m.log(4/decTh))+(2/n)
+	# return m.log(n)*m.sqrt((2/n)*m.log(4/decTh))+(2/n)
+	return (m.log(n)/2)*m.sqrt((2/n)*m.log(4/decTh))+(1/(2*n))
 
 def isASwap(outcome1,outcome2):
 	cpt = 0
