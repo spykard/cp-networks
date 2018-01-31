@@ -12,6 +12,7 @@ class CPNet:
 		self.numberOfRules = 0
 		self.name = name
 		self.candidateVariables = []
+		self.candidateNonParentVariables = {}
 		if not random:
 			self.variables = []
 		else:
@@ -84,29 +85,29 @@ class CPNet:
 		
 	def decision(self,decTh,decisionMode):
 		tabMax = []
-		
 		if len(self.candidateVariables) > 0:
-			for var in self.candidateVariables:
-				if var.time != 0:
-					tabMax.append([var.id,var.currentInformationGain])
-			if len(tabMax) > 0:
-				maxVar = max(tabMax,key=itemgetter(1))
-				# tabMax.remove(maxVar)
-				# maxVar2 = max(tabMax,key=itemgetter(1))
-				
-				var = self.getVariable(maxVar[0])
-				# var = self.getVariable(maxVar2[0])
-				
-				if decisionMode == 1:
-					# print(maxVar[1], epsilonMcDiarmid(decTh,var.time))
-					# if maxVar[1] <=  maxVar2[1] - 2*epsilonMcDiarmid(decTh,var.time):
-					# if maxVar[1] > 0.1:
-						# print("coucou",maxVar[1])
-					# if epsilonMcDiarmid(decTh,var.time) < 0.35:
-						# print(epsilonMcDiarmid(decTh,var.time))
+			if decisionMode == 1:
+				for var in self.candidateVariables:
+					if var.currentInformationGain != 0:
+						tabMax.append([var.id,var.currentInformationGain])
+				if len(tabMax) > 0:
+					maxVar = max(tabMax,key=itemgetter(1))
+					var = self.getVariable(maxVar[0])
 					if maxVar[1] > epsilonMcDiarmid(decTh,var.time):
-						return True,var
-		return False,-1
+						return True,var,-1
+			
+			if decisionMode == 2:
+				for var in self.candidateVariables:
+					if var.currentInformationGain != 0:
+						for nonPar in var.nonParents:
+							tabMax.append([var.id,nonPar,var.currentInformationGainNonParent[nonPar]])
+				if len(tabMax) > 0:
+					maxVar = max(tabMax,key=itemgetter(2))
+					var = self.getVariable(maxVar[0])
+					varPar = self.getVariable(maxVar[1])
+					if maxVar[2] > epsilonMcDiarmid(decTh,var.time):
+						return True,var,varPar
+		return False,-1,-1
 		
 	def addParentNewVersion(self,var,parentVariable,useOffline,numberOfParents,autorizedCycle,decisionMode):
 		var.parents.append(parentVariable)
@@ -114,17 +115,20 @@ class CPNet:
 		if self.cycle() and not autorizedCycle:
 			var.parents.remove(parentVariable)
 			self.updateCPGraph()
+			self.candidateNonParentVariables[var.id].remove(parentVariable.id)
+			if len(self.candidateNonParentVariables[var.id]) == 0:
+				del self.candidateNonParentVariables[var.id]
+				self.candidateVariables.remove(var)
 		else:
 			var.parents.remove(parentVariable)
+			if numberOfParents != -1 and len(var.parents)+1 >= numberOfParents:
+				self.candidateVariables.remove(var)
+				del self.candidateNonParentVariables[var.id]
 			if useOffline:
 				sub = var.addParentOffline(parentVariable,decisionMode)
 				self.numberOfRules = self.numberOfRules - sub
 			else:
-				if numberOfParents != -1 and len(var.parents)+1 >= numberOfParents:
-					self.candidateVariables.remove(var)
 				self.numberOfRules = var.addParentOnline(parentVariable,decisionMode,self.numberOfRules)
-				# self.numberOfRules = self.numberOfRules - sub + add
-				var.updateInformationGain(decisionMode)
 			return True
 		return False
 
@@ -162,8 +166,6 @@ class CPNet:
 						self.numberOfRules = self.numberOfRules - sub
 					else:
 						self.numberOfRules = var.addParentOnline(self.getVariable(it),decisionMode,self.numberOfRules)
-						# self.numberOfRules = self.numberOfRules - sub + add
-						var.updateInformationGain(decisionMode)
 					return True
 		var.alreadyTry = True
 		self.candidateVariables.remove(var)
@@ -181,6 +183,12 @@ class CPNet:
 			if numberOfParents != 0:
 				self.candidateVariables.append(var)
 		self.updateCPGraph()
+		
+	def updateCandidateNonParentVariables(self):
+		for var in self.candidateVariables:
+			self.candidateNonParentVariables[var.id] = []
+			for nonPar in var.nonParents:
+				self.candidateNonParentVariables[var.id].append(nPar)
 		
 	def addParentVariables(self,var,listParents,pref = None):
 		self.variables[self.variables.index(var)].addParents(listParents,preferences = pref)

@@ -1,13 +1,13 @@
 from sys import *
-from src.learnCpNet import *
+from src.learnCPnet import *
 
-# arguments for python3 command line: numberOfRounds online[True or False] offline[True or False] decisionMode[1 or 2 or 3] decisionThresholdBis
+# arguments for python3 command line: numberOfRounds online[True or False] offline[True or False] decisionMode[1 or 2] decisionThresholdBis
 print(argv[1],argv[2],argv[3],argv[4],argv[5])
 
 modeForDatasetGeneration = 2 # 1 = read a file, 2 = generate a synthetic database
 nameOfFile = "databases/test_database.dat"
-numberOfComparisons = 10000 # -1 = all of the comparisons in file
-percentageOfNoise = [0,10,20,40] # between 0 and 50
+numberOfComparisons = 2000000 # -1 = all of the comparisons in file
+percentageOfNoise = [0] # between 0 and 50
 numberOfVariables = 12 # -1 = automatically choose from the number of comparisons
 numberOfEdgesLambda = -1 # -1 = infinity
 numberOfParentsForTargetCPNet = -1 # -1 = infinity
@@ -18,9 +18,6 @@ numberOfRoundsForLearningProcedure = int(argv[1]) # = percentage taken in the da
 decisionThresholdBis = float(argv[5]) # delta for decisionMode = 1
 
 convergence = False
-
-if numberOfRoundsForLearningProcedure != 1:
-	convergence = False
 
 # True or False
 if argv[2] == "True":

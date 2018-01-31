@@ -1,4 +1,4 @@
-from src.learnCpNet import *
+from src.learnCPnet import *
 
 modeForDatasetGeneration = 2 # 1 = read a file, 2 = generate a synthetic database
 bagging = False
@@ -15,9 +15,6 @@ numberOfRoundsForLearningProcedure = 1 # = percentage taken in the dataset for t
 decisionThresholdBis = 0.1 # delta for decisionMode = 1
 
 convergence = True
-
-if numberOfRoundsForLearningProcedure != 1:
-	convergence = False
 
 online = True
 offline = True

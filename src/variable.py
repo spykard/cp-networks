@@ -48,7 +48,7 @@ class Variable:
 					for nonPar in self.nonParents:
 						c = pref.statsForRuleOne[nonPar] + pref.statsForInversedRuleZero[nonPar]
 						cBar = pref.statsForRuleZero[nonPar] + pref.statsForInversedRuleOne[nonPar]
-						self.currentInformationGainNonParent[nonPar] += ((pref.counterForRule + pref.counterForInversedRule)/self.time) * (entropy(pref.counterForRule, pref.counterForInversedRule) - entropy(c, cBar))
+						self.currentInformationGainNonParent[nonPar] += ((pref.counterForRule + pref.counterForInversedRule)/self.time) * m.fabs(entropy(pref.counterForRule, pref.counterForInversedRule) - entropy(c, cBar))
 
 	def updateCPTable(self,rule,outcome,canUse,decisionMode):
 		self.time += 1

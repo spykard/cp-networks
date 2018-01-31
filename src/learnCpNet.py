@@ -1,4 +1,4 @@
-from .cpNet import *
+from .CPnet import *
 from .database import *
 import time
 from random import *
@@ -14,6 +14,8 @@ def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,nbOfParents,lenOf
 		# initialization
 		N[n] = CPNet(name = "N")
 		N[n].addVariables(numberOfParents = nbOfParents, numberOfVariables = numberOfVar)
+		if decisionMode == 2:
+			N[n].updateCandidateNonParentVariables()
 		
 		for var in N[n].variables:
 			for i in range(len(N[n].variables)):
@@ -37,20 +39,14 @@ def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,nbOfParents,lenOf
 			if swapVariable in N[n].candidateVariables:
 				swapVariable.updateInformationGain(decisionMode)
 			if decisionMode == 1:
-				dec,candVariable = N[n].decision(dtBis,decisionMode)
+				dec,candVariable = N[n].decision(dtBis,decisionMode)[:2]
 				if dec:
 					N[n].addParent(candVariable,False,decisionMode,nbOfParents,autorizedCycle)
 					
 			if decisionMode == 2:
-				tabInformationGain = []
-				for var in N[n].variables:
-					if var.currentInformationGain != 0 and (len(var.parents) < nbOfParents or nbOfParents == -1):
-						for nonPar in var.nonParents:
-							tabInformationGain.append([var.currentInformationGainNonParent[nonPar],var.id,nonPar])
-				if len(tabInformationGain) != 0:
-					m = max(tabInformationGain,key=lambda colonnes: colonnes[0])
-					if decisionBis(dtBis,N[n].getVariable(m[1]).currentInformationGainNonParent[m[2]],N[n].getVariable(m[1]).time):
-						N[n].addParentNewVersion(N[n].getVariable(m[1]),N[n].getVariable(m[2]),False,nbOfParents,autorizedCycle,decisionMode)
+				dec,candVariable,candParVariable = N[n].decision(dtBis,decisionMode)
+				if dec:
+					N[n].addParentNewVersion(candVariable,candParVariable,False,nbOfParents,autorizedCycle,decisionMode)				
 				
 			if convergence:
 				correctComp = 0
@@ -77,6 +73,8 @@ def learningCPNetOffline(data,dataTestForConv,numberOfVar,nbOfParents,lenOfFold,
 		# initialization
 		N[n] = CPNet(name = "N")
 		N[n].addVariables(numberOfParents = nbOfParents, numberOfVariables = numberOfVar)
+		if decisionMode == 2:
+			N[n].updateCandidateNonParentVariables()
 		
 		listOfVariables = {}
 		
