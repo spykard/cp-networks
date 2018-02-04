@@ -39,16 +39,23 @@ class Variable:
 	def updateInformationGain(self,decisionMode):
 		self.currentInformationGain = 0
 		if decisionMode == 2:
+			sum = 0
+			sumNonPar = {}
 			for key in self.currentInformationGainNonParent.keys():
 				self.currentInformationGainNonParent[key] = 0
+				sumNonPar[key] = 0
 		for pref in self.preferences.values():
 			if pref.counterForRule != 0 and pref.counterForInversedRule != 0:
-				self.currentInformationGain += ((pref.counterForRule + pref.counterForInversedRule)/self.time) * entropy(pref.counterForRule, pref.counterForInversedRule)
+				if decisionMode == 1:
+					self.currentInformationGain += ((pref.counterForRule + pref.counterForInversedRule)/self.time) * entropy(pref.counterForRule, pref.counterForInversedRule)
 				if decisionMode == 2:
+					sum += max(pref.counterForRule, pref.counterForInversedRule)	
 					for nonPar in self.nonParents:
-						c = pref.statsForRuleOne[nonPar] + pref.statsForInversedRuleZero[nonPar]
-						cBar = pref.statsForRuleZero[nonPar] + pref.statsForInversedRuleOne[nonPar]
-						self.currentInformationGainNonParent[nonPar] += ((pref.counterForRule + pref.counterForInversedRule)/self.time) * m.fabs(entropy(pref.counterForRule, pref.counterForInversedRule) - entropy(c, cBar))
+						sumNonPar[nonPar] += max(pref.statsForRuleOne[nonPar] + pref.statsForInversedRuleZero[nonPar],pref.statsForRuleZero[nonPar] + pref.statsForInversedRuleOne[nonPar])
+		if decisionMode == 2:
+			self.currentInformationGain = entropy(sum/self.time,(1 - (sum/self.time)))
+			for nonPar in self.nonParents:
+					self.currentInformationGainNonParent[nonPar] = entropy(sumNonPar[nonPar]/self.time,(1 - (sumNonPar[nonPar]/self.time)))
 
 	def updateCPTable(self,rule,outcome,canUse,decisionMode):
 		self.time += 1

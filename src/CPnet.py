@@ -1,6 +1,7 @@
 from .variable import *
 from random import *
 from operator import itemgetter
+from math import *
 
 # a CP-Net constists of
 # a name, usually a letter
@@ -89,9 +90,9 @@ class CPNet:
 			if decisionMode == 1:
 				for var in self.candidateVariables:
 					if var.currentInformationGain != 0:
-						tabMax.append([var.id,var.currentInformationGain])
+						tabMax.append([var.id,var.currentInformationGain,var.currentInformationGain*(var.time/self.numberOfRules)])
 				if len(tabMax) > 0:
-					maxVar = max(tabMax,key=itemgetter(1))
+					maxVar = max(tabMax,key=itemgetter(2))
 					var = self.getVariable(maxVar[0])
 					if maxVar[1] > epsilonMcDiarmid(decTh,var.time):
 						return True,var,-1
@@ -100,12 +101,13 @@ class CPNet:
 				for var in self.candidateVariables:
 					if var.currentInformationGain != 0:
 						for nonPar in var.nonParents:
-							tabMax.append([var.id,nonPar,var.currentInformationGainNonParent[nonPar]])
+							tabMax.append([var.id,nonPar,fabs(var.currentInformationGain - var.currentInformationGainNonParent[nonPar]),fabs(var.currentInformationGain - var.currentInformationGainNonParent[nonPar])*(var.time/self.numberOfRules)])
 				if len(tabMax) > 0:
-					maxVar = max(tabMax,key=itemgetter(2))
+					maxVar = max(tabMax,key=itemgetter(3))
 					var = self.getVariable(maxVar[0])
 					varPar = self.getVariable(maxVar[1])
-					if maxVar[2] > epsilonMcDiarmid(decTh,var.time):
+					# print(maxVar[2],epsilonMcDiarmid2(decTh,var.time))
+					if maxVar[2] > epsilonMcDiarmid2(decTh,var.time):
 						return True,var,varPar
 		return False,-1,-1
 		

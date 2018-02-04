@@ -42,7 +42,8 @@ def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,nbOfParents,lenOf
 				dec,candVariable = N[n].decision(dtBis,decisionMode)[:2]
 				if dec:
 					N[n].addParent(candVariable,False,decisionMode,nbOfParents,autorizedCycle)
-					
+			
+			# entropy for couple of variables
 			if decisionMode == 2:
 				dec,candVariable,candParVariable = N[n].decision(dtBis,decisionMode)
 				if dec:
@@ -125,12 +126,12 @@ def learningCPNetOffline(data,dataTestForConv,numberOfVar,nbOfParents,lenOfFold,
 				for var in N[n].candidateVariables:
 					b = True
 					for i in range(len(varEntr)):
-						if varEntr[i][0] == var.currentInformationGain:
+						if varEntr[i][0] == var.currentInformationGain*(var.time/N[n].numberOfRules):
 							b = False
 							varEntr[i][1].append(var.id)
 							break
 					if b == True:
-						varEntr.append([var.currentInformationGain,[var.id]])
+						varEntr.append([var.currentInformationGain*(var.time/N[n].numberOfRules),[var.id]])
 				
 				# choose a random variable among those which have the best entropy
 				varEntr.sort(key=lambda colonnes: colonnes[0],reverse=True)
@@ -155,15 +156,13 @@ def learningCPNetOffline(data,dataTestForConv,numberOfVar,nbOfParents,lenOfFold,
 			# use entropy for searching a couple (conditioned,parent) variables
 			if decisionMode == 2:
 				tabInformationGain = []
-				infoMax = 0
+				finish = True
 				for var in N[n].variables:
 					if var.currentInformationGain != 0 and (len(var.parents) < nbOfParents or nbOfParents == -1):
-						infoMax = var.currentInformationGain
+						finish = False
 						for nonPar in var.nonParents:
-							tabInformationGain.append([var.currentInformationGainNonParent[nonPar],var.id,nonPar])
-				if infoMax == 0:
-					finish = True
-				else:
+							tabInformationGain.append([fabs(var.currentInformationGain - var.currentInformationGainNonParent[nonPar])*(var.time/N[n].numberOfRules),var.id,nonPar])
+				if not finish:
 					tabInformationGain.sort(key=lambda colonnes: colonnes[0],reverse=True)
 					finish = True
 					for elt in tabInformationGain:
