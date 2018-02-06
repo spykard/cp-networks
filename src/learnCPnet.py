@@ -14,16 +14,15 @@ def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,nbOfParents,lenOf
 		# initialization
 		N[n] = CPNet(name = "N")
 		N[n].addVariables(numberOfParents = nbOfParents, numberOfVariables = numberOfVar)
-		if decisionMode == 2:
-			N[n].updateCandidateNonParentVariables()
 		
 		for var in N[n].variables:
 			for i in range(len(N[n].variables)):
 				if var.id != i:
 					var.nonParents.append(i)
+					var.candidateNonParentVariables.append(i)
 					var.generalTableForMean[i] = 0
 			var.preferences[-1] = Stats(var,0,0)
-			for nonPar in var.nonParents:
+			for nonPar in var.candidateNonParentVariables:
 				var.currentInformationGainNonParent[nonPar] = 0
 		
 		# learning procedure
@@ -34,31 +33,33 @@ def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,nbOfParents,lenOf
 			swapVariable = N[n].getVariable(comparison[2])
 			rule = N[n].returnRule(swapVariable,comparison[0],comparison[1])[1:]
 			N[n].numberOfRules += 1
-			# McDiarmid bound
+
 			swapVariable.updateCPTable(rule,comparison[0],swapVariable in N[n].candidateVariables,decisionMode)
 			if swapVariable in N[n].candidateVariables:
 				swapVariable.updateInformationGain(decisionMode)
+			
+			# McDiarmid bound
 			if decisionMode == 1:
-				dec,candVariable = N[n].decision(dtBis,decisionMode)[:2]
+				dec,candVariable = N[n].decision(dtBis,decisionMode,cpt)[:2]
 				if dec:
 					N[n].addParent(candVariable,False,decisionMode,nbOfParents,autorizedCycle)
 			
 			# entropy for couple of variables
 			if decisionMode == 2:
-				dec,candVariable,candParVariable = N[n].decision(dtBis,decisionMode)
+				dec,candVariable,candParVariable = N[n].decision(dtBis,decisionMode,cpt)
 				if dec:
-					N[n].addParentNewVersion(candVariable,candParVariable,False,nbOfParents,autorizedCycle,decisionMode)				
+					N[n].addParentNewVersion(candVariable,candParVariable,False,nbOfParents,autorizedCycle,decisionMode)
 				
+			iterationTimeAfter = time.clock()
+			iterationTime[n].append(iterationTimeAfter - iterationTimeBefore)
+			
 			if convergence:
 				correctComp = 0
 				for comparison in dataTestForConv[0]:
 					if N[n].fitCPNet(N[n].returnRule(N[n].getVariable(comparison[2]),comparison[0],comparison[1])):
 						correctComp += 1
 				convergenceAccuracyOnline[n][cpt].append(correctComp/lenOfFold*100)
-				cpt += 1
-				
-			iterationTimeAfter = time.clock()
-			iterationTime[n].append(iterationTimeAfter - iterationTimeBefore)
+			cpt += 1
 			
 		timeAfter = time.clock()
 		computationTimeOnline[n].append(timeAfter - timeBefore)
@@ -84,9 +85,10 @@ def learningCPNetOffline(data,dataTestForConv,numberOfVar,nbOfParents,lenOfFold,
 			for i in range(len(N[n].variables)):
 				if var.id != i:
 					var.nonParents.append(i)
+					var.candidateNonParentVariables.append(i)
 					var.generalTableForMean[i] = 0
 			var.preferences[-1] = Stats(var,0,0)
-			for nonPar in var.nonParents:
+			for nonPar in var.candidateNonParentVariables:
 				var.currentInformationGainNonParent[nonPar] = 0
 		
 		# learning procedure		
@@ -146,7 +148,7 @@ def learningCPNetOffline(data,dataTestForConv,numberOfVar,nbOfParents,lenOfFold,
 					finish = True
 					for item in varEntr:
 						for it in item[1]:
-							if not N[n].getVariable(it).alreadyTry and (len(N[n].getVariable(it).parents) < nbOfParents or nbOfParents == -1):
+							if N[n].getVariable(it) in N[n].candidateVariables and (len(N[n].getVariable(it).parents) < nbOfParents or nbOfParents == -1):
 								if N[n].addParent(N[n].getVariable(it),True,decisionMode,nbOfParents,autorizedCycle):
 									finish = False
 									break
@@ -160,7 +162,7 @@ def learningCPNetOffline(data,dataTestForConv,numberOfVar,nbOfParents,lenOfFold,
 				for var in N[n].variables:
 					if var.currentInformationGain != 0 and (len(var.parents) < nbOfParents or nbOfParents == -1):
 						finish = False
-						for nonPar in var.nonParents:
+						for nonPar in var.candidateNonParentVariables:
 							tabInformationGain.append([fabs(var.currentInformationGain - var.currentInformationGainNonParent[nonPar])*(var.time/N[n].numberOfRules),var.id,nonPar])
 				if not finish:
 					tabInformationGain.sort(key=lambda colonnes: colonnes[0],reverse=True)

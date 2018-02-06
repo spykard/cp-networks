@@ -7,14 +7,14 @@ class Stats():
 		self.counterForRule = counterForRule
 		self.statsForRuleOne = {}
 		self.statsForRuleZero = {}
-		for nonPar in var.nonParents:
+		for nonPar in var.candidateNonParentVariables:
 			self.statsForRuleOne[nonPar] = 0
 			self.statsForRuleZero[nonPar] = 0
 			
 		self.counterForInversedRule = counterForInversedRule
 		self.statsForInversedRuleOne = {}
 		self.statsForInversedRuleZero = {}
-		for nonPar in var.nonParents:
+		for nonPar in var.candidateNonParentVariables:
 			self.statsForInversedRuleOne[nonPar] = 0
 			self.statsForInversedRuleZero[nonPar] = 0
 		if self.counterForRule != 0 or self.counterForInversedRule != 0:
