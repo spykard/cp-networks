@@ -17,7 +17,7 @@ class Database:
 		
 		# generate database from a file
 		if mode == 1:
-			print("step " + str(step) + "/" + str(smooth) + ":\t\t\tdata generation phase in progress...")
+			print("step " + str(step) + "/" + str(smooth) + ":\t\t\t\tdata generation phase in progress...")
 			file = open(filename,"r")
 			data = []
 			lines = file.readlines()
@@ -66,7 +66,7 @@ class Database:
 				nbV = ceil(log(nC,2)) + 1
 			N = CPNet(name = "N2", random = True,nbVar = nbV,lbd = lb,nbMaxParents = nbP)
 
-			print("step " + str(step) + "/" + str(smooth) + ":\t\t\tdata generation phase in progress...")	
+			print("step " + str(step) + "/" + str(smooth) + ":\t\t\t\tdata generation phase in progress...")	
 			
 			self.lenOfFold = int(nC/k)
 			for i in range(k):

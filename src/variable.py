@@ -22,6 +22,13 @@ class Variable:
 		self.numberOfRules = 0
 		self.candidateNonParentVariables = []
 		
+		self.cptRule = 0
+		self.cptInversedRule = 0
+		self.cptNonParRule = {}
+		self.cptNonParInversedRule = {}
+		self.cptOtherNonParRule = {}
+		self.cptOtherNonParInversedRule = {}
+		
 		self.currentInformationGain = 0.0
 		self.currentInformationGainNonParent = {}
 		
@@ -36,29 +43,54 @@ class Variable:
 			s += str(par.id) + ","
 		print(s + "]")
 		
+	# def updateInformationGain(self,decisionMode):
+		# self.currentInformationGain = 0
+		# sum = 0
+		# if decisionMode == 2:
+			# sumNonPar = {}
+			# for nonPar in self.candidateNonParentVariables:
+				# self.currentInformationGainNonParent[nonPar] = 0
+				# sumNonPar[nonPar] = 0
+		# for pref in self.preferences.values():
+			# if pref.counterForRule != 0 and pref.counterForInversedRule != 0:
+				# if decisionMode == 1:
+					# sum += max(pref.counterForRule, pref.counterForInversedRule)
+				# if decisionMode == 2:
+					# sum += max(pref.counterForRule, pref.counterForInversedRule)
+					# for nonPar in self.candidateNonParentVariables:
+						# sumNonPar[nonPar] += max(pref.statsForRuleOne[nonPar] + pref.statsForInversedRuleZero[nonPar],pref.statsForRuleZero[nonPar] + pref.statsForInversedRuleOne[nonPar])
+		# self.currentInformationGain = entropy(sum/self.time,(1 - (sum/self.time)))
+		# if decisionMode == 2:
+			# for nonPar in self.candidateNonParentVariables:
+					# self.currentInformationGainNonParent[nonPar] = entropy(sumNonPar[nonPar]/self.time,1 - (sumNonPar[nonPar]/self.time))
+	
 	def updateInformationGain(self,decisionMode):
 		self.currentInformationGain = 0
+		sum = 0
+		if decisionMode == 1:
+			for pref in self.preferences.values():
+				if pref.counterForRule != 0 and pref.counterForInversedRule != 0:
+					if decisionMode == 1:
+						sum += max(pref.counterForRule, pref.counterForInversedRule)
+						# self.currentInformationGain += ((pref.counterForRule + pref.counterForInversedRule)/self.time) * entropy(pref.counterForRule, pref.counterForInversedRule)
+					if decisionMode == 2:
+						sum += max(pref.counterForRule, pref.counterForInversedRule)
+						for nonPar in self.candidateNonParentVariables:
+							sumNonPar[nonPar] += max(pref.statsForRuleOne[nonPar] + pref.statsForInversedRuleZero[nonPar],pref.statsForRuleZero[nonPar] + pref.statsForInversedRuleOne[nonPar])
+			self.currentInformationGain = entropy(sum/self.time,(1 - (sum/self.time)))
 		if decisionMode == 2:
-			sum = 0
-			sumNonPar = {}
 			for nonPar in self.candidateNonParentVariables:
 				self.currentInformationGainNonParent[nonPar] = 0
-				sumNonPar[nonPar] = 0
-		for pref in self.preferences.values():
-			if pref.counterForRule != 0 and pref.counterForInversedRule != 0:
-				if decisionMode == 1:
-					self.currentInformationGain += ((pref.counterForRule + pref.counterForInversedRule)/self.time) * entropy(pref.counterForRule, pref.counterForInversedRule)
-				if decisionMode == 2:
-					sum += max(pref.counterForRule, pref.counterForInversedRule)	
-					for nonPar in self.candidateNonParentVariables:
-						sumNonPar[nonPar] += max(pref.statsForRuleOne[nonPar] + pref.statsForInversedRuleZero[nonPar],pref.statsForRuleZero[nonPar] + pref.statsForInversedRuleOne[nonPar])
-		if decisionMode == 2:
-			self.currentInformationGain = entropy(sum/self.time,(1 - (sum/self.time)))
-			for nonPar in self.candidateNonParentVariables:
-					self.currentInformationGainNonParent[nonPar] = entropy(sumNonPar[nonPar]/self.time,1 - (sumNonPar[nonPar]/self.time))
+				cptNonPar = self.cptNonParRule[nonPar] + self.cptOtherNonParInversedRule[nonPar]
+				cptOtherNonPar = self.cptOtherNonParRule[nonPar] + self.cptOtherNonParInversedRule[nonPar]
+				if cptNonPar != 0 or cptOtherNonPar != 0:
+					self.currentInformationGainNonParent[nonPar] = entropy(self.cptRule,self.cptInversedRule) - ((cptNonPar/(cptNonPar+cptOtherNonPar))*entropy(self.cptNonParRule[nonPar],self.cptOtherNonParInversedRule[nonPar]) + (cptOtherNonPar/(cptNonPar+cptOtherNonPar))*entropy(self.cptOtherNonParRule[nonPar],self.cptOtherNonParInversedRule[nonPar]))
 
 	def updateCPTable(self,rule,outcome,canUse,decisionMode):
 		self.time += 1
+		if rule[1] == 1:
+			self.cptRule += 1
+		else: self.cptInversedRule += 1
 		if self.preferences[rule[0]].trueRule == -1:
 			self.numberOfRules += 1
 		self.preferences[rule[0]].addOneToTheCounter(rule[1])
@@ -69,13 +101,17 @@ class Variable:
 				if outcome[nonPar] == 1:
 					if rule[1] == 1:
 						self.preferences[rule[0]].statsForRuleOne[nonPar] += 1
+						self.cptNonParRule[nonPar] += 1
 					else:
 						self.preferences[rule[0]].statsForInversedRuleOne[nonPar] += 1
+						self.cptOtherNonParRule[nonPar] += 1
 				else:
 					if rule[1] == 1:
 						self.preferences[rule[0]].statsForRuleZero[nonPar] += 1
+						self.cptNonParInversedRule[nonPar] += 1
 					else:
 						self.preferences[rule[0]].statsForInversedRuleZero[nonPar] += 1
+						self.cptOtherNonParInversedRule[nonPar] += 1
 				if decisionMode == 1:
 					self.generalTableForMean[nonPar] += self.preferences[rule[0]].calcMax(nonPar,rule[1],False)
 		self.preferences[rule[0]].setTrueRule()
@@ -85,6 +121,14 @@ class Variable:
 		self.parents.append(par)
 		self.parents.sort()
 		self.nonParents.remove(par.id)
+		
+		del self.cptNonParInversedRule[par.id]
+		del self.cptNonParRule[par.id]
+		del self.cptOtherNonParRule[par.id]
+		del self.cptOtherNonParInversedRule[par.id]
+		self.cptRule = 0
+		self.cptInversedRule = 0
+		
 		if decisionMode == 2:
 			del self.currentInformationGainNonParent[par.id]
 
@@ -97,6 +141,11 @@ class Variable:
 		self.generalTableForMean = {}
 		for nonPar in self.candidateNonParentVariables:
 			self.generalTableForMean[nonPar] = 0
+			
+			self.cptNonParRule[nonPar] = 0
+			self.cptNonParInversedRule[nonPar] = 0
+			self.cptOtherNonParRule[nonPar] = 0
+			self.cptOtherNonParInversedRule[nonPar] = 0
 		
 		for key,value in oldPreferences.items():		
 			if key == -1:
@@ -146,6 +195,16 @@ class Variable:
 		self.parents.append(par)
 		self.parents.sort()
 		self.nonParents.remove(par.id)
+		
+		del self.candidateNonParentVariables[par.id]
+		
+		del self.cptNonParInversedRule[par.id]
+		del self.cptNonParRule[par.id]
+		del self.cptOtherNonParRule[par.id]
+		del self.cptOtherNonParInversedRule[par.id]
+		self.cptRule = 0
+		self.cptInversedRule = 0
+		
 		if decisionMode == 2:
 			del self.currentInformationGainNonParent[par.id]
 		self.preferences = {}
@@ -156,10 +215,17 @@ class Variable:
 		sub = 0
 		add = 0
 		
+		for nonPar in self.candidateNonParentVariables:
+			self.cptNonParRule[nonPar] = 0
+			self.cptNonParInversedRule[nonPar] = 0
+			self.cptOtherNonParRule[nonPar] = 0
+			self.cptOtherNonParInversedRule[nonPar] = 0
+		
 		if decisionMode == 1:
 			self.generalTableForMean = {}
 			for nonPar in self.candidateNonParentVariables:
 				self.generalTableForMean[nonPar] = 0
+				
 		
 		for key,value in oldPreferences.items():
 			if key == -1:
@@ -167,6 +233,9 @@ class Variable:
 				self.preferences[0] = Stats(self,oldPreferences[-1].statsForRuleZero[par.id],oldPreferences[-1].statsForInversedRuleZero[par.id])
 				
 				self.time += self.preferences[1].counterForRule + self.preferences[1].counterForInversedRule + self.preferences[0].counterForRule + self.preferences[1].counterForInversedRule
+				
+				self.cptRule += self.preferences[1].counterForRule + self.preferences[0].counterForRule
+				self.cptInversedRule += self.preferences[1].counterForInversedRule + self.preferences[1].counterForInversedRule
 				
 				if oldPreferences[-1].statsForRuleOne[par.id] + oldPreferences[-1].statsForInversedRuleOne[par.id] != 0:
 					self.numberOfRules += 1
@@ -186,6 +255,11 @@ class Variable:
 					self.preferences[0].statsForRuleZero[nonPar] = max(oldPreferences[-1].statsForRuleZero[nonPar] - oldPreferences[-1].counterForRule + oldPreferences[-1].statsForRuleZero[par.id],0)
 					self.preferences[0].statsForInversedRuleOne[nonPar] = max(oldPreferences[-1].statsForInversedRuleOne[nonPar] - oldPreferences[-1].counterForInversedRule + oldPreferences[-1].statsForInversedRuleZero[par.id],0)
 					self.preferences[0].statsForInversedRuleZero[nonPar] = max(oldPreferences[-1].statsForInversedRuleZero[nonPar] - oldPreferences[-1].counterForInversedRule + oldPreferences[-1].statsForInversedRuleZero[par.id],0)
+					
+					self.cptNonParRule[nonPar] = self.preferences[1].statsForRuleOne[nonPar] + self.preferences[0].statsForRuleOne[nonPar]
+					self.cptNonParInversedRule[nonPar] = self.preferences[1].statsForInversedRuleOne[nonPar] + self.preferences[0].statsForInversedRuleOne[nonPar]
+					self.cptOtherNonParRule[nonPar] = self.preferences[1].statsForRuleZero[nonPar] + self.preferences[0].statsForRuleZero[nonPar]
+					self.cptOtherNonParInversedRule[nonPar] = self.preferences[1].statsForInversedRuleZero[nonPar] + self.preferences[0].statsForInversedRuleZero[nonPar]
 				
 					if decisionMode == 1:
 						self.generalTableForMean[nonPar] += self.preferences[1].calcMax(nonPar,1,False) + self.preferences[0].calcMax(nonPar,1,False)
@@ -202,6 +276,9 @@ class Variable:
 				self.preferences[fromBinToInt(newVector0)] = Stats(self,oldPreferences[key].statsForRuleZero[par.id],oldPreferences[key].statsForInversedRuleZero[par.id])
 				
 				self.time += self.preferences[fromBinToInt(newVector1)].counterForRule + self.preferences[fromBinToInt(newVector1)].counterForInversedRule + self.preferences[fromBinToInt(newVector0)].counterForRule + self.preferences[fromBinToInt(newVector0)].counterForInversedRule
+				
+				self.cptRule += self.preferences[fromBinToInt(newVector1)].counterForRule + self.preferences[fromBinToInt(newVector0)].counterForRule
+				self.cptInversedRule += self.preferences[fromBinToInt(newVector1)].counterForInversedRule + self.preferences[fromBinToInt(newVector0)].counterForInversedRule
 				
 				if oldPreferences[key].statsForRuleOne[par.id] + oldPreferences[key].statsForInversedRuleOne[par.id] != 0:
 					self.numberOfRules += 1
@@ -221,6 +298,11 @@ class Variable:
 					self.preferences[fromBinToInt(newVector0)].statsForRuleZero[nonPar] = max(oldPreferences[key].statsForRuleZero[nonPar] - oldPreferences[key].counterForRule + oldPreferences[key].statsForRuleZero[par.id],0)
 					self.preferences[fromBinToInt(newVector0)].statsForInversedRuleOne[nonPar] = max(oldPreferences[key].statsForInversedRuleOne[nonPar] - oldPreferences[key].counterForInversedRule + oldPreferences[key].statsForInversedRuleZero[par.id],0)
 					self.preferences[fromBinToInt(newVector0)].statsForInversedRuleZero[nonPar] = max(oldPreferences[key].statsForInversedRuleZero[nonPar] - oldPreferences[key].counterForInversedRule + oldPreferences[key].statsForInversedRuleZero[par.id],0)
+					
+					self.cptNonParRule[nonPar] = self.preferences[fromBinToInt(newVector1)].statsForRuleOne[nonPar] + self.preferences[fromBinToInt(newVector0)].statsForRuleOne[nonPar]
+					self.cptNonParInversedRule[nonPar] = self.preferences[fromBinToInt(newVector1)].statsForInversedRuleOne[nonPar] + self.preferences[fromBinToInt(newVector0)].statsForInversedRuleOne[nonPar]
+					self.cptOtherNonParRule[nonPar] = self.preferences[fromBinToInt(newVector1)].statsForRuleZero[nonPar] + self.preferences[fromBinToInt(newVector0)].statsForRuleZero[nonPar]
+					self.cptOtherNonParInversedRule[nonPar] = self.preferences[fromBinToInt(newVector1)].statsForInversedRuleZero[nonPar] + self.preferences[fromBinToInt(newVector0)].statsForInversedRuleZero[nonPar]
 				
 					if decisionMode == 1:
 						self.generalTableForMean[nonPar] += self.preferences[fromBinToInt(newVector1)].calcMax(nonPar,1,False) + self.preferences[fromBinToInt(newVector0)].calcMax(nonPar,1,False)

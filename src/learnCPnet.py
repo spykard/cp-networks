@@ -20,6 +20,12 @@ def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,nbOfParents,lenOf
 				if var.id != i:
 					var.nonParents.append(i)
 					var.candidateNonParentVariables.append(i)
+					
+					var.cptNonParRule[i] = 0
+					var.cptNonParInversedRule[i] = 0
+					var.cptOtherNonParRule[i] = 0
+					var.cptOtherNonParInversedRule[i] = 0
+					
 					var.generalTableForMean[i] = 0
 			var.preferences[-1] = Stats(var,0,0)
 			for nonPar in var.candidateNonParentVariables:
@@ -41,14 +47,14 @@ def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,nbOfParents,lenOf
 			# McDiarmid bound
 			if decisionMode == 1:
 				dec,candVariable = N[n].decision(dtBis,decisionMode,cpt)[:2]
-				if dec:
-					N[n].addParent(candVariable,False,decisionMode,nbOfParents,autorizedCycle)
+				if dec and N[n].addParent(candVariable,False,decisionMode,nbOfParents,autorizedCycle):
+					print("\t\t" + str(cpt + 1) + "th comparison:\t\t\tvariable " + str(candVariable.id + 1) + " receives a new parent variable...")
 			
 			# entropy for couple of variables
 			if decisionMode == 2:
 				dec,candVariable,candParVariable = N[n].decision(dtBis,decisionMode,cpt)
-				if dec:
-					N[n].addParentNewVersion(candVariable,candParVariable,False,nbOfParents,autorizedCycle,decisionMode)
+				if dec and N[n].addParentNewVersion(candVariable,candParVariable,False,nbOfParents,autorizedCycle,decisionMode):
+					print("\t\t" + str(cpt + 1) + "th comparison:\t\t\tvariable " + str(candVariable.id + 1) + " receives the parent variable " + str(candParVariable.id +1) + "...")
 				
 			iterationTimeAfter = time.clock()
 			iterationTime[n].append(iterationTimeAfter - iterationTimeBefore)
@@ -86,6 +92,12 @@ def learningCPNetOffline(data,dataTestForConv,numberOfVar,nbOfParents,lenOfFold,
 				if var.id != i:
 					var.nonParents.append(i)
 					var.candidateNonParentVariables.append(i)
+					
+					var.cptNonParRule[i] = 0
+					var.cptNonParInversedRule[i] = 0
+					var.cptOtherNonParRule[i] = 0
+					var.cptOtherNonParInversedRule[i] = 0
+					
 					var.generalTableForMean[i] = 0
 			var.preferences[-1] = Stats(var,0,0)
 			for nonPar in var.candidateNonParentVariables:
@@ -150,6 +162,7 @@ def learningCPNetOffline(data,dataTestForConv,numberOfVar,nbOfParents,lenOfFold,
 						for it in item[1]:
 							if N[n].getVariable(it) in N[n].candidateVariables and (len(N[n].getVariable(it).parents) < nbOfParents or nbOfParents == -1):
 								if N[n].addParent(N[n].getVariable(it),True,decisionMode,nbOfParents,autorizedCycle):
+									print("\t\t\t\t\tvariable " + str(it + 1) + " receives a new parent variable...")
 									finish = False
 									break
 						if not finish:
@@ -160,15 +173,16 @@ def learningCPNetOffline(data,dataTestForConv,numberOfVar,nbOfParents,lenOfFold,
 				tabInformationGain = []
 				finish = True
 				for var in N[n].variables:
-					if var.currentInformationGain != 0 and (len(var.parents) < nbOfParents or nbOfParents == -1):
+					if len(var.parents) < nbOfParents or nbOfParents == -1:
 						finish = False
 						for nonPar in var.candidateNonParentVariables:
-							tabInformationGain.append([fabs(var.currentInformationGain - var.currentInformationGainNonParent[nonPar])*(var.time/N[n].numberOfRules),var.id,nonPar])
+							tabInformationGain.append([(var.time/N[n].numberOfRules)*var.currentInformationGainNonParent[nonPar],var.id,nonPar])
 				if not finish:
 					tabInformationGain.sort(key=lambda colonnes: colonnes[0],reverse=True)
 					finish = True
 					for elt in tabInformationGain:
 						if N[n].addParentNewVersion(N[n].getVariable(elt[1]),N[n].getVariable(elt[2]),True,nbOfParents,autorizedCycle,decisionMode):
+							print("\t\t\t\t\tvariable " + str(elt[1] + 1) + " receives the parent variable " + str(elt[2] +1) + "...")
 							finish = False
 							break							
 						
@@ -245,19 +259,19 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 							dataTrain[n].extend(dataset.dataFold[other][n])
 			if offline:
 				if online:
-					print("\tsubstep " + str(2 * j + 1) + "/" + str(2*smooth2) + ":\t\tOFFLINE learning phase in progress...")
+					print("\tsubstep " + str(2 * j + 1) + "/" + str(2*smooth2) + ":\t\t\tOFFLINE learning phase in progress...")
 				else:
-					print("\tsubstep " + str(j + 1) + "/" + str(smooth2) + ":\t\tOFFLINE learning phase in progress...")
+					print("\tsubstep " + str(j + 1) + "/" + str(smooth2) + ":\t\t\tOFFLINE learning phase in progress...")
 				learnedCPNetOffline = learningCPNetOffline(dataTrain,dataTest,dataset.numberOfAttributes,numberOfParents2,dataset.lenOfFold,convergence,convergenceAccuracyOffline,no,computationTimeOffline,decisionMode,autorizedCycle)
 		
 			if online:
 				if offline:
-					print("\tsubstep " + str(2 * j + 2) + "/" + str(2*smooth2) + ":\t\tONLINE learning phase in progress...")
+					print("\tsubstep " + str(2 * j + 2) + "/" + str(2*smooth2) + ":\t\t\tONLINE learning phase in progress...")
 				else:
-					print("\tsubstep " + str(j + 1) + "/" + str(smooth2) + ":\t\tONLINE learning phase in progress...")
+					print("\tsubstep " + str(j + 1) + "/" + str(smooth2) + ":\t\t\tONLINE learning phase in progress...")
 				learnedCPNetOnline = learningCPNetOnline(dataTrain,dataTest,dataset.numberOfAttributes,dtBis,numberOfParents2,dataset.lenOfFold,convergence,convergenceAccuracyOnline,no,computationTimeOnline,iterationTime,decisionMode,autorizedCycle)
 			
-			print("\t\t\t\ttest phase in progress...")
+			print("\t\t\t\t\ttest phase in progress...")
 			for n in no:
 				correctCompOnline = 0
 				correctCompOffline = 0

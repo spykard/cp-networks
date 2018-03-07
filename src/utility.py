@@ -61,7 +61,18 @@ def epsilonMcDiarmid(decTh,n):
 def epsilonMcDiarmid2(decTh,n):
 	if decTh == 0:
 		return 0
-	return m.log(n)*m.sqrt((2/n)*m.log(4/decTh))+(1/n)
+	# return m.log(n)*m.sqrt((2/n)*m.log(4/decTh))+(1/n)
+	return (((n+1)*m.log(n))/(2*n))*m.sqrt((2/n)*m.log(4/decTh))+(1/(2*n))+(1/(2*(n**2)))
+	
+def epsilonMcDiarmid2(decTh,n,nB,nnB):
+	if decTh == 0:
+		return 0
+	return (((n*m.log(n))/nnB)*m.sqrt((2/n)*m.log(4/decTh))+(2/n)) + (((nB*m.log(nB))/nnB)*m.sqrt((2/nB)*m.log(4/decTh))+(2/nB))
+	
+def epsilonMcDiarmid3(decTh,n,nnB):
+	if decTh == 0:
+		return 0
+	return (((n*m.log(n))/nnB)*m.sqrt((2/n)*m.log(4/decTh))+(2/n))
 
 def isASwap(outcome1,outcome2):
 	cpt = 0

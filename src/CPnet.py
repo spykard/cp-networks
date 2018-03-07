@@ -98,16 +98,30 @@ class CPNet:
 			
 			if decisionMode == 2:
 				for var in self.candidateVariables:
-					if var.currentInformationGain != 0:
+					#if var.currentInformationGain != 0:
+					if var.time != 0:
 						for nonPar in var.candidateNonParentVariables:
-							tabMax.append([var.id,nonPar,fabs(var.currentInformationGain - var.currentInformationGainNonParent[nonPar]),fabs(var.currentInformationGain - var.currentInformationGainNonParent[nonPar])*(var.time/self.numberOfRules)])
-				if len(tabMax) > 0:
+							tabMax.append([var.id,nonPar,(var.time/self.numberOfRules)*var.currentInformationGainNonParent[nonPar]])
+
+				# if cpt % 10000 == 0:
+					# print("coucou")
+				if len(tabMax) > 1:
 					maxVar = max(tabMax,key=itemgetter(2))
 					var = self.getVariable(maxVar[0])
 					varPar = self.getVariable(maxVar[1])
-					if cpt % 10000 == 0:
-						print(maxVar[2],epsilonMcDiarmid2(decTh,var.time))
-					if maxVar[2] > epsilonMcDiarmid2(decTh,var.time):
+					
+					# tabMax.remove(max(tabMax,key=itemgetter(2)))
+					# maxVar2 = max(tabMax,key=itemgetter(2))
+					# var2 = self.getVariable(maxVar[0])
+					# varPar2 = self.getVariable(maxVar[1])
+					
+					# if cpt % 10000 == 0:
+						# print(maxVar[2] - maxVar2[2],epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules))
+					# if maxVar[2] - maxVar2[2] > 2*epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules):
+						# return True,var,varPar
+					# if cpt % 10000 == 0:
+						# print(maxVar[2],epsilonMcDiarmid3(decTh,var.time,self.numberOfRules))
+					if maxVar[2] > epsilonMcDiarmid3(decTh,var.time,self.numberOfRules):
 						return True,var,varPar
 		return False,-1,-1
 		
@@ -118,13 +132,24 @@ class CPNet:
 			var.parents.remove(parentVariable)
 			self.updateCPGraph()
 			var.candidateNonParentVariables.remove(parentVariable.id)
+			
+			del var.cptNonParInversedRule[parentVariable.id]
+			del var.cptNonParRule[parentVariable.id]
+			del var.cptOtherNonParRule[parentVariable.id]
+			del var.cptOtherNonParInversedRule[parentVariable.id]
+			
 			if len(var.candidateNonParentVariables) == 0:
 				self.candidateVariables.remove(var)
 		else:
 			var.parents.remove(parentVariable)
 			if numberOfParents != -1 and len(var.parents)+1 >= numberOfParents:
 				self.candidateVariables.remove(var)
+				
 				var.candidateNonParentVariables = []
+				del var.cptNonParInversedRule[parentVariable.id]
+				del var.cptNonParRule[parentVariable.id]
+				del var.cptOtherNonParRule[parentVariable.id]
+				del var.cptOtherNonParInversedRule[parentVariable.id]
 			if useOffline:
 				sub = var.addParentOffline(parentVariable,decisionMode)
 				self.numberOfRules = self.numberOfRules - sub
@@ -159,6 +184,12 @@ class CPNet:
 					var.parents.remove(self.getVariable(it))
 					self.updateCPGraph()
 					var.candidateNonParentVariables.remove(it)
+					
+					del var.cptNonParInversedRule[it]
+					del var.cptNonParRule[it]
+					del var.cptOtherNonParRule[it]
+					del var.cptOtherNonParInversedRule[it]
+					
 					if len(var.candidateNonParentVariables) == 0:
 						self.candidateVariables.remove(var)
 				else:
@@ -166,6 +197,12 @@ class CPNet:
 					if numberOfParents != -1 and len(var.parents)+1 >= numberOfParents:
 						self.candidateVariables.remove(var)
 						var.candidateNonParentVariables = []
+						
+						var.candidateNonParentVariables = []
+						var.cptNonParInversedRule = {}
+						var.cptNonParRule = {}
+						var.cptOtherNonParRule = {}
+						var.cptOtherNonParInversedRule = {}
 					if useOffline:
 						sub = var.addParentOffline(self.getVariable(it),decisionMode)
 						self.numberOfRules = self.numberOfRules - sub
@@ -209,8 +246,8 @@ class CPNet:
 		for var in self.variables:
 			p = ""
 			for par in var.parents:
-				p += " " + str(par.id)
-			print("Var." + str(var.id),"has",len(var.parents),"parents variable(s) :" + p)				
+				p += " " + str(par.id+1)
+			print("Var." + str(var.id+1),"has",len(var.parents),"parents variable(s) :" + p)				
 			
 	def displayCPNet(self):
 		print("This CP-Net",self.name,"has", len(self.variables), "variable(s).")
@@ -218,7 +255,7 @@ class CPNet:
 		for var in self.variables:
 			if var.parents == [] and var.preferences:
 				noPreferences = False
-				print("Var." + str(var.id), ":", var.preferences[-1].trueRule, "is preferred than", int(not(var.preferences[-1].trueRule)))
+				print("Var." + str(var.id+1), ":", var.preferences[-1].trueRule, "is preferred than", int(not(var.preferences[-1].trueRule)))
 			if var.parents != []:
 				for key in var.preferences.keys():
 					parentsVect = fromIntToBin(key,len(var.parents))
@@ -226,8 +263,8 @@ class CPNet:
 					string = "with"
 					for i,elt in enumerate(parentsVect):
 						if i < len(var.parents):
-							string += " Var." + str(var.parents[i].id) + " = " + str(elt)
-					print("Var." + str(var.id), string, "as parents :", int(var.preferences[key].trueRule), "is preferred than", int(not(var.preferences[key].trueRule)))
+							string += " Var." + str(var.parents[i].id+1) + " = " + str(elt)
+					print("Var." + str(var.id+1), string, "as parents :", int(var.preferences[key].trueRule), "is preferred than", int(not(var.preferences[key].trueRule)))
 		if noPreferences:
 			print("Without any preference yet.")
 		
