@@ -67,7 +67,8 @@ def epsilonMcDiarmid2(decTh,n):
 def epsilonMcDiarmid2(decTh,n,nB,nnB):
 	if decTh == 0:
 		return 0
-	return (((n*m.log(n))/nnB)*m.sqrt((2/n)*m.log(4/decTh))+(2/n)) + (((nB*m.log(nB))/nnB)*m.sqrt((2/nB)*m.log(4/decTh))+(2/nB))
+	# return (((n*m.log(n))/nnB)*m.sqrt((2/n)*m.log(4/decTh))+(2/n)) + (((nB*m.log(nB))/nnB)*m.sqrt((2/nB)*m.log(4/decTh))+(2/nB))
+	return (m.sqrt((2/n)*m.log(4/decTh))+(2/n)) + (m.sqrt((2/nB)*m.log(4/decTh))+(2/nB))
 	
 def epsilonMcDiarmid3(decTh,n,nnB):
 	if decTh == 0:

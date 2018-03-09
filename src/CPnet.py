@@ -99,30 +99,30 @@ class CPNet:
 			if decisionMode == 2:
 				for var in self.candidateVariables:
 					#if var.currentInformationGain != 0:
-					if var.time != 0:
+					if var.cptRule != 0 and var.cptInversedRule != 0:
 						for nonPar in var.candidateNonParentVariables:
-							tabMax.append([var.id,nonPar,(var.time/self.numberOfRules)*var.currentInformationGainNonParent[nonPar]])
+							# tabMax.append([var.id,nonPar,(var.time/self.numberOfRules)*var.currentInformationGainNonParent[nonPar]])
+							tabMax.append([var.id,nonPar,var.currentInformationGainNonParent[nonPar]])
 
-				# if cpt % 10000 == 0:
-					# print("coucou")
 				if len(tabMax) > 1:
 					maxVar = max(tabMax,key=itemgetter(2))
 					var = self.getVariable(maxVar[0])
 					varPar = self.getVariable(maxVar[1])
 					
-					# tabMax.remove(max(tabMax,key=itemgetter(2)))
-					# maxVar2 = max(tabMax,key=itemgetter(2))
-					# var2 = self.getVariable(maxVar[0])
-					# varPar2 = self.getVariable(maxVar[1])
+					tabMax.remove(max(tabMax,key=itemgetter(2)))
+					maxVar2 = max(tabMax,key=itemgetter(2))
+					var2 = self.getVariable(maxVar[0])
+					varPar2 = self.getVariable(maxVar[1])
 					
 					# if cpt % 10000 == 0:
 						# print(maxVar[2] - maxVar2[2],epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules))
-					# if maxVar[2] - maxVar2[2] > 2*epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules):
-						# return True,var,varPar
+					# if maxVar[2] - maxVar2[2] > 2*epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) or epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) < 0.07:
+					if maxVar[2] <= maxVar2[2] - 2*epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) or epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) < 0.05:
+						return True,var,varPar
 					# if cpt % 10000 == 0:
 						# print(maxVar[2],epsilonMcDiarmid3(decTh,var.time,self.numberOfRules))
-					if maxVar[2] > epsilonMcDiarmid3(decTh,var.time,self.numberOfRules):
-						return True,var,varPar
+					# if maxVar[2] > epsilonMcDiarmid3(decTh,var.time,self.numberOfRules):
+						# return True,var,varPar
 		return False,-1,-1
 		
 	def addParentNewVersion(self,var,parentVariable,useOffline,numberOfParents,autorizedCycle,decisionMode):
@@ -133,11 +133,6 @@ class CPNet:
 			self.updateCPGraph()
 			var.candidateNonParentVariables.remove(parentVariable.id)
 			
-			del var.cptNonParInversedRule[parentVariable.id]
-			del var.cptNonParRule[parentVariable.id]
-			del var.cptOtherNonParRule[parentVariable.id]
-			del var.cptOtherNonParInversedRule[parentVariable.id]
-			
 			if len(var.candidateNonParentVariables) == 0:
 				self.candidateVariables.remove(var)
 		else:
@@ -146,10 +141,6 @@ class CPNet:
 				self.candidateVariables.remove(var)
 				
 				var.candidateNonParentVariables = []
-				del var.cptNonParInversedRule[parentVariable.id]
-				del var.cptNonParRule[parentVariable.id]
-				del var.cptOtherNonParRule[parentVariable.id]
-				del var.cptOtherNonParInversedRule[parentVariable.id]
 			if useOffline:
 				sub = var.addParentOffline(parentVariable,decisionMode)
 				self.numberOfRules = self.numberOfRules - sub
@@ -185,11 +176,6 @@ class CPNet:
 					self.updateCPGraph()
 					var.candidateNonParentVariables.remove(it)
 					
-					del var.cptNonParInversedRule[it]
-					del var.cptNonParRule[it]
-					del var.cptOtherNonParRule[it]
-					del var.cptOtherNonParInversedRule[it]
-					
 					if len(var.candidateNonParentVariables) == 0:
 						self.candidateVariables.remove(var)
 				else:
@@ -197,12 +183,7 @@ class CPNet:
 					if numberOfParents != -1 and len(var.parents)+1 >= numberOfParents:
 						self.candidateVariables.remove(var)
 						var.candidateNonParentVariables = []
-						
-						var.candidateNonParentVariables = []
-						var.cptNonParInversedRule = {}
-						var.cptNonParRule = {}
-						var.cptOtherNonParRule = {}
-						var.cptOtherNonParInversedRule = {}
+
 					if useOffline:
 						sub = var.addParentOffline(self.getVariable(it),decisionMode)
 						self.numberOfRules = self.numberOfRules - sub

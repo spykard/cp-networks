@@ -21,11 +21,6 @@ def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,nbOfParents,lenOf
 					var.nonParents.append(i)
 					var.candidateNonParentVariables.append(i)
 					
-					var.cptNonParRule[i] = 0
-					var.cptNonParInversedRule[i] = 0
-					var.cptOtherNonParRule[i] = 0
-					var.cptOtherNonParInversedRule[i] = 0
-					
 					var.generalTableForMean[i] = 0
 			var.preferences[-1] = Stats(var,0,0)
 			for nonPar in var.candidateNonParentVariables:
@@ -92,11 +87,6 @@ def learningCPNetOffline(data,dataTestForConv,numberOfVar,nbOfParents,lenOfFold,
 				if var.id != i:
 					var.nonParents.append(i)
 					var.candidateNonParentVariables.append(i)
-					
-					var.cptNonParRule[i] = 0
-					var.cptNonParInversedRule[i] = 0
-					var.cptOtherNonParRule[i] = 0
-					var.cptOtherNonParInversedRule[i] = 0
 					
 					var.generalTableForMean[i] = 0
 			var.preferences[-1] = Stats(var,0,0)
@@ -176,11 +166,13 @@ def learningCPNetOffline(data,dataTestForConv,numberOfVar,nbOfParents,lenOfFold,
 					if len(var.parents) < nbOfParents or nbOfParents == -1:
 						finish = False
 						for nonPar in var.candidateNonParentVariables:
-							tabInformationGain.append([(var.time/N[n].numberOfRules)*var.currentInformationGainNonParent[nonPar],var.id,nonPar])
+							# tabInformationGain.append([(var.time/N[n].numberOfRules)*var.currentInformationGainNonParent[nonPar],var.id,nonPar])
+							tabInformationGain.append([var.currentInformationGainNonParent[nonPar],var.id,nonPar])
 				if not finish:
 					tabInformationGain.sort(key=lambda colonnes: colonnes[0],reverse=True)
 					finish = True
 					for elt in tabInformationGain:
+						if elt[0] < 0: print(elt[0])
 						if N[n].addParentNewVersion(N[n].getVariable(elt[1]),N[n].getVariable(elt[2]),True,nbOfParents,autorizedCycle,decisionMode):
 							print("\t\t\t\t\tvariable " + str(elt[1] + 1) + " receives the parent variable " + str(elt[2] +1) + "...")
 							finish = False
