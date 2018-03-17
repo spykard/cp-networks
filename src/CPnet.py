@@ -83,7 +83,7 @@ class CPNet:
 		for var in self.candidateVariables:
 			var.updateInformationGain(decisionMode)
 		
-	def decision(self,decTh,decisionMode,cpt):
+	def decision(self,decTh,epsilonThreshold,decisionMode,cpt):
 		tabMax = []
 		if len(self.candidateVariables) > 0:
 			if decisionMode == 1:
@@ -101,8 +101,9 @@ class CPNet:
 					#if var.currentInformationGain != 0:
 					if var.cptRule != 0 and var.cptInversedRule != 0:
 						for nonPar in var.candidateNonParentVariables:
-							# tabMax.append([var.id,nonPar,(var.time/self.numberOfRules)*var.currentInformationGainNonParent[nonPar]])
-							tabMax.append([var.id,nonPar,var.currentInformationGainNonParent[nonPar]])
+							if var.currentInformationGainNonParent[nonPar] > 0:
+								# tabMax.append([var.id,nonPar,(var.time/self.numberOfRules)*var.currentInformationGainNonParent[nonPar]])
+								tabMax.append([var.id,nonPar,var.currentInformationGainNonParent[nonPar]])
 
 				if len(tabMax) > 1:
 					maxVar = max(tabMax,key=itemgetter(2))
@@ -117,7 +118,7 @@ class CPNet:
 					# if cpt % 10000 == 0:
 						# print(maxVar[2] - maxVar2[2],epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules))
 					# if maxVar[2] - maxVar2[2] > 2*epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) or epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) < 0.07:
-					if maxVar[2] <= maxVar2[2] - 2*epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) or epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) < 0.05:
+					if maxVar[2] <= maxVar2[2] - 2*epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) or epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) < epsilonThreshold:
 						return True,var,varPar
 					# if cpt % 10000 == 0:
 						# print(maxVar[2],epsilonMcDiarmid3(decTh,var.time,self.numberOfRules))

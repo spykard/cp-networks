@@ -13,6 +13,7 @@ numberOfRoundsForFileGeneration = 3
 numberOfRoundsForLearningProcedure = 10 # = percentage taken in the dataset for the bagging
 
 decisionThresholdBis = 0.1 # delta for decisionMode = 1
+epsilonThreshold = 0.05 # threshold for epsilon
 
 convergence = False
 
@@ -29,7 +30,7 @@ fileTestHL = open("test-results/test_comp_soa_Offline.dat","w")
 fileTestOL = open("test-results/test_comp_soa_Online.dat","w")
 for numberOfEdgesLambda in [1,3,-1]:
 	for numberOfVariables in [4,8,12]:
-		averageCycleSize2,aOnline,sdAOnline,aOffline,sdAOffline,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,sdANoiseOnline,meanAccNoiseOffline,sdANoiseOffline,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,sdConvergenceAccuracyOnline,meanConvergenceAccuracyOffline,sdConvergenceAccuracyOffline = generalProcedure(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,convergence,online,offline,decisionMode,None,autorizedCycle)
+		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,sdConvergenceAccuracyOnline,meanConvergenceAccuracyOffline,sdConvergenceAccuracyOffline = generalProcedure(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,online,offline,decisionMode,None,autorizedCycle)
 		fileTestHL.write("lambda " + str(numberOfEdgesLambda) + " var " + str(numberOfVariables) + " acc " + str(aOffline[0]) + "\n")
 		fileTestOL.write("lambda " + str(numberOfEdgesLambda) + " var " + str(numberOfVariables) + " acc " + str(aOnline[0]) + "\n")
 fileTestHL.close()

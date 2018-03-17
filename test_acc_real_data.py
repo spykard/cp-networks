@@ -14,6 +14,7 @@ numberOfRoundsForFileGeneration = 1
 numberOfRoundsForLearningProcedure = 10 # = percentage taken in the dataset for the bagging
 
 decisionThresholdBis = 0.1 # delta for decisionMode = 1
+epsilonThreshold = 0.05 # threshold for epsilon
 
 convergence = False
 
@@ -29,35 +30,35 @@ decisionMode = 1
 fileTestHL = open("test-results/test_acc_sushi_10000_Offline.dat","w")
 fileTestOL = open("test-results/test_acc_sushi_10000_Online.dat","w")
 for numberOfParentsForLearnedCPNet in [0,1,2]:
-	averageCycleSize2,aOnline,sdAOnline,aOffline,sdAOffline,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,sdANoiseOnline,meanAccNoiseOffline,sdANoiseOffline,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,sdConvergenceAccuracyOnline,meanConvergenceAccuracyOffline,sdConvergenceAccuracyOffline = generalProcedure(modeForDatasetGeneration,nameOfFile[0],numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,convergence,online,offline,decisionMode,None,autorizedCycle)
-	fileTestHL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOffline[0]) + " " + str(sdAOffline[0]) + "\n")
-	fileTestOL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOnline[0]) + " " + str(sdAOnline[0]) + "\n")
+	averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,sdConvergenceAccuracyOnline,meanConvergenceAccuracyOffline,sdConvergenceAccuracyOffline = generalProcedure(modeForDatasetGeneration,nameOfFile[0],numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,online,offline,decisionMode,None,autorizedCycle)
+	fileTestHL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOffline[0]) + " " + str(sdAOffline[0]) + str(aOfflineLog[0]) + " " + str(sdAOfflineLog[0]) + "\n")
+	fileTestOL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOnline[0]) + " " + str(sdAOnline[0]) + str(aOnlineLog[0]) + " " + str(sdAOnlineLog[0]) + "\n")
 fileTestHL.close()
 fileTestOL.close()
 
 fileTestHL = open("test-results/test_acc_sushi_20000_Offline.dat","w")
 fileTestOL = open("test-results/test_acc_sushi_20000_Online.dat","w")
 for numberOfParentsForLearnedCPNet in [0,1,2]:
-	averageCycleSize2,aOnline,sdAOnline,aOffline,sdAOffline,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,sdANoiseOnline,meanAccNoiseOffline,sdANoiseOffline,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,sdConvergenceAccuracyOnline,meanConvergenceAccuracyOffline,sdConvergenceAccuracyOffline = generalProcedure(modeForDatasetGeneration,nameOfFile[1],numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,convergence,online,offline,decisionMode,None,autorizedCycle)
-	fileTestHL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOffline[0]) + " " + str(sdAOffline[0]) + "\n")
-	fileTestOL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOnline[0]) + " " + str(sdAOnline[0]) + "\n")
+	averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,sdConvergenceAccuracyOnline,meanConvergenceAccuracyOffline,sdConvergenceAccuracyOffline = generalProcedure(modeForDatasetGeneration,nameOfFile[1],numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,online,offline,decisionMode,None,autorizedCycle)
+	fileTestHL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOffline[0]) + " " + str(sdAOffline[0]) + str(aOfflineLog[0]) + " " + str(sdAOfflineLog[0]) + "\n")
+	fileTestOL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOnline[0]) + " " + str(sdAOnline[0]) + str(aOnlineLog[0]) + " " + str(sdAOnlineLog[0]) + "\n")
 fileTestHL.close()
 fileTestOL.close()
 
 fileTestHL = open("test-results/test_acc_hotels_10000_Offline.dat","w")
 fileTestOL = open("test-results/test_acc_hotels_10000_Online.dat","w")
 for numberOfParentsForLearnedCPNet in [0,1,2,3,4,5,6]:
-	averageCycleSize2,aOnline,sdAOnline,aOffline,sdAOffline,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,sdANoiseOnline,meanAccNoiseOffline,sdANoiseOffline,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,sdConvergenceAccuracyOnline,meanConvergenceAccuracyOffline,sdConvergenceAccuracyOffline = generalProcedure(modeForDatasetGeneration,nameOfFile[2],numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,convergence,online,offline,decisionMode,None,autorizedCycle)
-	fileTestHL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOffline[0]) + " " + str(sdAOffline[0]) + "\n")
-	fileTestOL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOnline[0]) + " " + str(sdAOnline[0]) + "\n")
+	averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,sdConvergenceAccuracyOnline,meanConvergenceAccuracyOffline,sdConvergenceAccuracyOffline = generalProcedure(modeForDatasetGeneration,nameOfFile[2],numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,online,offline,decisionMode,None,autorizedCycle)
+	fileTestHL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOffline[0]) + " " + str(sdAOffline[0]) + str(aOfflineLog[0]) + " " + str(sdAOfflineLog[0]) + "\n")
+	fileTestOL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOnline[0]) + " " + str(sdAOnline[0]) + str(aOnlineLog[0]) + " " + str(sdAOnlineLog[0]) + "\n")
 fileTestHL.close()
 fileTestOL.close()
 
 fileTestHL = open("test-results/test_acc_hotels_20000_Offline.dat","w")
 fileTestOL = open("test-results/test_acc_hotels_20000_Online.dat","w")
 for numberOfParentsForLearnedCPNet in [0,1,2,3,4,5,6]:
-	averageCycleSize2,aOnline,sdAOnline,aOffline,sdAOffline,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,sdANoiseOnline,meanAccNoiseOffline,sdANoiseOffline,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,sdConvergenceAccuracyOnline,meanConvergenceAccuracyOffline,sdConvergenceAccuracyOffline = generalProcedure(modeForDatasetGeneration,nameOfFile[3],numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,convergence,online,offline,decisionMode,None,autorizedCycle)
-	fileTestHL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOffline[0]) + " " + str(sdAOffline[0]) + "\n")
-	fileTestOL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOnline[0]) + " " + str(sdAOnline[0]) + "\n")
+	averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,sdConvergenceAccuracyOnline,meanConvergenceAccuracyOffline,sdConvergenceAccuracyOffline = generalProcedure(modeForDatasetGeneration,nameOfFile[3],numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,online,offline,decisionMode,None,autorizedCycle)
+	fileTestHL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOffline[0]) + " " + str(sdAOffline[0]) + str(aOfflineLog[0]) + " " + str(sdAOfflineLog[0]) + "\n")
+	fileTestOL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOnline[0]) + " " + str(sdAOnline[0]) + str(aOnlineLog[0]) + " " + str(sdAOnlineLog[0]) + "\n")
 fileTestHL.close()
 fileTestOL.close()

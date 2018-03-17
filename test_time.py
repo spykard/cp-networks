@@ -13,6 +13,7 @@ numberOfRoundsForFileGeneration = 10
 numberOfRoundsForLearningProcedure = 1 # = percentage taken in the dataset for the bagging
 
 decisionThresholdBis = 0.1 # delta for decisionMode = 1
+epsilonThreshold = 0.05 # threshold for epsilon
 
 convergence = False
 
@@ -28,7 +29,7 @@ for numberOfComparisons in [10000,50000,100000,500000]:
 	fileTestHL = open("test-results/test_time_" + str(numberOfComparisons) + "_Offline.dat","w")
 	fileTestOL = open("test-results/test_time_" + str(numberOfComparisons) + "_Online.dat","w")
 	for numberOfParentsForLearnedCPNet in [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]:
-		averageCycleSize2,aOnline,sdAOnline,aOffline,sdAOffline,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,sdANoiseOnline,meanAccNoiseOffline,sdANoiseOffline,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,sdConvergenceAccuracyOnline,meanConvergenceAccuracyOffline,sdConvergenceAccuracyOffline = generalProcedure(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,convergence,online,offline,decisionMode,None,autorizedCycle)
+		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,sdConvergenceAccuracyOnline,meanConvergenceAccuracyOffline,sdConvergenceAccuracyOffline = generalProcedure(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,online,offline,decisionMode,None,autorizedCycle)
 		fileTestHL.write(str(numberOfParentsForLearnedCPNet) + " " + str(tOffline[0]) + " " + str(sdTOffline[0]) + " \n")
 		fileTestOL.write(str(numberOfParentsForLearnedCPNet) + " " + str(tOnline[0]) + " " + str(sdTOnline[0]) + " \n")
 	fileTestHL.close()

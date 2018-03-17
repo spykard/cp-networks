@@ -99,7 +99,7 @@ class Variable:
 				if outcome[nonPar] == 1:
 					if rule[1] == 1:
 						self.preferences[rule[0]].statsForRuleOne[nonPar] += 1
-						else:
+					else:
 						self.preferences[rule[0]].statsForInversedRuleOne[nonPar] += 1
 				else:
 					if rule[1] == 1:

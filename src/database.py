@@ -32,10 +32,11 @@ class Database:
 				fVar = isASwap(object1,object2)
 				if fVar != -1:
 					data.append([object1,object2,fVar])
-				
 			if nC != -1:
 				cpt = 0
-				self.lenOfFold = int(nC/k)
+				if nC <= len(data):
+					self.lenOfFold = int(nC/k)
+				else: self.lenOfFold = int(len(data)/k)
 				if cpt < nC and cpt < len(data):
 					cpt = 0
 					for i in range(k):
