@@ -57,7 +57,7 @@ def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,epsilonThreshold,
 			iterationTime[n].append(iterationTimeAfter - iterationTimeBefore)
 			
 			# compute the convergence				
-			if convergence and cpt%(int(len(data)/1000)) == 0:
+			if convergence and cpt%(len(data[n])//1000) == 0:
 				correctComp = 0
 				correctCompLog = []
 				for i in range(len(N[n].variables)):
@@ -70,11 +70,12 @@ def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,epsilonThreshold,
 					if N[n].fitCPNet(N[n].returnRule(N[n].getVariable(comparison[2]),comparison[0],comparison[1])):
 						correctComp += 1
 						correctCompLog[comparison[2]] += 1
-				convergenceAccuracyOnline[n][cpt].append(correctComp/lenOfFold*100)
+				print(len(data[n]),cpt,cpt//(int(len(data[n])/1000)))
+				convergenceAccuracyOnline[n][cpt//(int(len(data[n])/1000))].append(correctComp/lenOfFold*100)
 				sum = 0
 				for i in range(len(N[n].variables)):
 					sum += (nbComp[i]/lenOfFold)*entropy(correctCompLog[i],nbComp[i] - correctCompLog[i])
-				convergenceAccuracyOnlineLog[n][cpt//(int(len(data)/1000))].append(sum)
+				convergenceAccuracyOnlineLog[n][cpt//(int(len(data[n])/1000))].append(sum)
 			cpt += 1
 			
 		timeAfter = time.clock()
@@ -261,8 +262,12 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 		if i == 0:
 			for n in no:
 				if online:
-					convergenceAccuracyOnline[n] = [[] for i in range(1000)]
-					convergenceAccuracyOnlineLog[n] = [[] for i in range(1000)]
+					if smooth2 == 1:
+						convergenceAccuracyOnline[n] = [[] for i in range(dataset.lenOfFold*smooth2)]
+						convergenceAccuracyOnlineLog[n] = [[] for i in range(dataset.lenOfFold*smooth2)]
+					else:
+						convergenceAccuracyOnline[n] = [[] for i in range(dataset.lenOfFold*(smooth2-1))]
+						convergenceAccuracyOnlineLog[n] = [[] for i in range(dataset.lenOfFold*(smooth2-1))]
 					computationTimeOnline[n] = []
 					iterationTime[n] = []
 					accOnline[n] = []
