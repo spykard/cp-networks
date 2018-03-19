@@ -116,7 +116,8 @@ class Variable:
 		self.parents.sort()
 		self.nonParents.remove(par.id)
 		
-		self.candidateNonParentVariables.remove(par.id)
+		if par.id in self.candidateNonParentVariables:
+			self.candidateNonParentVariables.remove(par.id)
 
 		self.cptRule = 0
 		self.cptInversedRule = 0
