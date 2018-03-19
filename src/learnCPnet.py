@@ -4,7 +4,7 @@ import time
 from random import *
 from math import *
 
-def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,epsilonThreshold,nbOfParents,lenOfFold,convergence,convergenceAccuracyOnline,noise,computationTimeOnline,iterationTime,decisionMode,autorizedCycle):
+def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,epsilonThreshold,nbOfParents,lenOfFold,convergence,convergenceAccuracyOnline,convergenceAccuracyOnlineLog,noise,computationTimeOnline,iterationTime,decisionMode,autorizedCycle):
 	N = {}
 	for n in noise:
 		shuffle(data[n])
@@ -56,12 +56,25 @@ def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,epsilonThreshold,
 			iterationTimeAfter = time.clock()
 			iterationTime[n].append(iterationTimeAfter - iterationTimeBefore)
 			
-			if convergence:
+			# compute the convergence				
+			if convergence and cpt%(int(len(data)/1000)) == 0:
 				correctComp = 0
+				correctCompLog = []
+				for i in range(len(N[n].variables)):
+					correctCompLog.append(0)
+				nbComp = []
+				for i in range(len(N[n].variables)):
+					nbComp.append(0)
 				for comparison in dataTestForConv[0]:
+					nbComp[comparison[2]] += 1
 					if N[n].fitCPNet(N[n].returnRule(N[n].getVariable(comparison[2]),comparison[0],comparison[1])):
 						correctComp += 1
+						correctCompLog[comparison[2]] += 1
 				convergenceAccuracyOnline[n][cpt].append(correctComp/lenOfFold*100)
+				sum = 0
+				for i in range(len(N[n].variables)):
+					sum += (nbComp[i]/lenOfFold)*entropy(correctCompLog[i],nbComp[i] - correctCompLog[i])
+				convergenceAccuracyOnlineLog[n][cpt//(int(len(data)/1000))].append(sum)
 			cpt += 1
 			
 		timeAfter = time.clock()
@@ -69,7 +82,7 @@ def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,epsilonThreshold,
 
 	return N
 	
-def learningCPNetOffline(data,dataTestForConv,numberOfVar,nbOfParents,lenOfFold,convergence,convergenceAccuracyOffline,noise,computationTimeOffline,decisionMode,autorizedCycle):
+def learningCPNetOffline(data,dataTestForConv,numberOfVar,nbOfParents,lenOfFold,convergence,convergenceAccuracyOffline,convergenceAccuracyOfflineLog,noise,computationTimeOffline,decisionMode,autorizedCycle):
 	N = {}
 	for n in noise:
 		
@@ -115,14 +128,26 @@ def learningCPNetOffline(data,dataTestForConv,numberOfVar,nbOfParents,lenOfFold,
 			# compute accuracy in case of convergence
 			if convergence:
 				correctComp = 0
+				correctCompLog = []
+				for i in range(len(N[n].variables)):
+					correctCompLog.append(0)
+				nbComp = []
+				for i in range(len(N[n].variables)):
+					nbComp.append(0)
 				for comparison in dataTestForConv[0]:
+					nbComp[comparison[2]] += 1
 					if N[n].fitCPNet(N[n].returnRule(N[n].getVariable(comparison[2]),comparison[0],comparison[1])):
 						correctComp += 1
-				
+						correctCompLog[comparison[2]] += 1			
+				sum = 0
+				for i in range(len(N[n].variables)):
+					sum += (nbComp[i]/lenOfFold)*entropy(correctCompLog[i],nbComp[i] - correctCompLog[i])
 				if len(convergenceAccuracyOffline[n]) <= cpt:
 					convergenceAccuracyOffline[n].append([correctComp/lenOfFold*100])
+					convergenceAccuracyOfflineLog[n].append([sum])
 				else:
 					convergenceAccuracyOffline[n][cpt].append(correctComp/lenOfFold*100)
+					convergenceAccuracyOfflineLog[n][cpt].append(sum)
 				cpt += 1
 			
 			# compute information gain variables
@@ -197,6 +222,7 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 		smooth = 1
 	
 	convergenceAccuracyOnline = {}
+	convergenceAccuracyOnlineLog = {}
 	computationTimeOnline = {}
 	iterationTime = {}
 	accOnline = {}
@@ -205,6 +231,7 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 	accNoiseOnlineLog = {}
 	
 	convergenceAccuracyOffline = {}
+	convergenceAccuracyOfflineLog = {}
 	computationTimeOffline = {}
 	accOffline = {}
 	accOfflineLog = {}
@@ -234,7 +261,8 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 		if i == 0:
 			for n in no:
 				if online:
-					convergenceAccuracyOnline[n] = [[] for i in range(dataset.lenOfFold)]
+					convergenceAccuracyOnline[n] = [[] for i in range(1000)]
+					convergenceAccuracyOnlineLog[n] = [[] for i in range(1000)]
 					computationTimeOnline[n] = []
 					iterationTime[n] = []
 					accOnline[n] = []
@@ -243,6 +271,7 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 					accNoiseOnlineLog[n] = []
 				if offline:
 					convergenceAccuracyOffline[n] = []
+					convergenceAccuracyOfflineLog[n] = []
 					computationTimeOffline[n] = []
 					accOffline[n] = []
 					accOfflineLog[n] = []
@@ -266,14 +295,14 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 					print("\tsubstep " + str(2 * j + 1) + "/" + str(2*smooth2) + ":\t\t\tOFFLINE learning phase in progress...")
 				else:
 					print("\tsubstep " + str(j + 1) + "/" + str(smooth2) + ":\t\t\tOFFLINE learning phase in progress...")
-				learnedCPNetOffline = learningCPNetOffline(dataTrain,dataTest,dataset.numberOfAttributes,numberOfParents2,dataset.lenOfFold,convergence,convergenceAccuracyOffline,no,computationTimeOffline,decisionMode,autorizedCycle)
+				learnedCPNetOffline = learningCPNetOffline(dataTrain,dataTest,dataset.numberOfAttributes,numberOfParents2,dataset.lenOfFold,convergence,convergenceAccuracyOffline,convergenceAccuracyOfflineLog,no,computationTimeOffline,decisionMode,autorizedCycle)
 		
 			if online:
 				if offline:
 					print("\tsubstep " + str(2 * j + 2) + "/" + str(2*smooth2) + ":\t\t\tONLINE learning phase in progress...")
 				else:
 					print("\tsubstep " + str(j + 1) + "/" + str(smooth2) + ":\t\t\tONLINE learning phase in progress...")
-				learnedCPNetOnline = learningCPNetOnline(dataTrain,dataTest,dataset.numberOfAttributes,dtBis,epsilonThreshold,numberOfParents2,dataset.lenOfFold,convergence,convergenceAccuracyOnline,no,computationTimeOnline,iterationTime,decisionMode,autorizedCycle)
+				learnedCPNetOnline = learningCPNetOnline(dataTrain,dataTest,dataset.numberOfAttributes,dtBis,epsilonThreshold,numberOfParents2,dataset.lenOfFold,convergence,convergenceAccuracyOnline,convergenceAccuracyOnlineLog,no,computationTimeOnline,iterationTime,decisionMode,autorizedCycle)
 			
 			print("\t\t\t\t\ttest phase in progress...")
 			for n in no:
@@ -319,14 +348,15 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 						correctCompNoiseOffline += 1
 						correctCompNoiseOfflineLog[comparison[2]] += 1
 				
+				# compute accuracy
 				if online:
 					accOnline[n].append(correctCompOnline/dataset.lenOfFold*100)
 					accNoiseOnline[n].append(correctCompNoiseOnline/dataset.lenOfFold*100)
 					sum = 0
 					sumNoise = 0
 					for i in range(dataset.numberOfAttributes):
-						sum += (nbComp[i]/len(dataTest[n]))*entropy(correctCompOnlineLog[i],nbComp[i] - correctCompOnlineLog[i])
-						sumNoise += (nbComp[i]/len(dataTest[0]))*entropy(correctCompNoiseOnlineLog[i],nbComp[i] - correctCompNoiseOnlineLog[i])
+						sum += (nbComp[i]/dataset.lenOfFold)*entropy(correctCompOnlineLog[i],nbComp[i] - correctCompOnlineLog[i])
+						sumNoise += (nbComp[i]/dataset.lenOfFold)*entropy(correctCompNoiseOnlineLog[i],nbComp[i] - correctCompNoiseOnlineLog[i])
 					accOnlineLog[n].append(sum)
 					accNoiseOnlineLog[n].append(sumNoise)
 				if offline:
@@ -335,8 +365,8 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 					sum = 0
 					sumNoise = 0
 					for i in range(dataset.numberOfAttributes):
-						sum += (nbComp[i]/len(dataTest[n]))*entropy(correctCompOfflineLog[i],nbComp[i] - correctCompOfflineLog[i])
-						sumNoise += (nbComp[i]/len(dataTest[0]))*entropy(correctCompNoiseOfflineLog[i],nbComp[i] - correctCompNoiseOfflineLog[i])
+						sum += (nbComp[i]/dataset.lenOfFold)*entropy(correctCompOfflineLog[i],nbComp[i] - correctCompOfflineLog[i])
+						sumNoise += (nbComp[i]/dataset.lenOfFold)*entropy(correctCompNoiseOfflineLog[i],nbComp[i] - correctCompNoiseOfflineLog[i])
 					accOfflineLog[n].append(sum)
 					accNoiseOfflineLog[n].append(sumNoise)
 	
@@ -456,9 +486,13 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 				sdTOffline[n] = sqrt(sdTOffline[n])
 
 	meanConvergenceAccuracyOnline = {}
+	meanConvergenceAccuracyOnlineLog = {}
 	sdConvergenceAccuracyOnline = {}
+	sdConvergenceAccuracyOnlineLog = {}
 	meanConvergenceAccuracyOffline = {}
+	meanConvergenceAccuracyOfflineLog = {}
 	sdConvergenceAccuracyOffline = {}
+	sdConvergenceAccuracyOfflineLog = {}
 	
 	if convergence:
 		if offline:
@@ -470,33 +504,50 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 				lastIt = convergenceAccuracyOffline[n][-1]
 				while len(convergenceAccuracyOffline[n]) < maxLenIt:
 					convergenceAccuracyOffline[n].append(lastIt)
+				lastItLog = convergenceAccuracyOfflineLog[n][-1]
+				while len(convergenceAccuracyOfflineLog[n]) < maxLenIt:
+					convergenceAccuracyOfflineLog[n].append(lastItLog)
 			
 		for n in no:
 			if online:
-				meanConvergenceAccuracyOnline[n] = [0 for i in range(dataset.lenOfFold)]
-				sdConvergenceAccuracyOnline[n] = [0 for i in range(dataset.lenOfFold)]
+				meanConvergenceAccuracyOnline[n] = [0 for i in range(1000)]
+				meanConvergenceAccuracyOnlineLog[n] = [0 for i in range(1000)]
+				sdConvergenceAccuracyOnline[n] = [0 for i in range(1000)]
+				sdConvergenceAccuracyOnlineLog[n] = [0 for i in range(1000)]
 				for j in range(len(meanConvergenceAccuracyOnline[n])):
 					for i in range(totalSmooth):
 						meanConvergenceAccuracyOnline[n][j] += convergenceAccuracyOnline[n][j][i]
+						meanConvergenceAccuracyOnlineLog[n][j] += convergenceAccuracyOnlineLog[n][j][i]
 					meanConvergenceAccuracyOnline[n][j] /= totalSmooth
+					meanConvergenceAccuracyOnlineLog[n][j] /= totalSmooth
 					for i in range(totalSmooth):
 						sdConvergenceAccuracyOnline[n][j] += (convergenceAccuracyOnline[n][j][i] - meanConvergenceAccuracyOnline[n][j])**2
+						sdConvergenceAccuracyOnlineLog[n][j] += (convergenceAccuracyOnlineLog[n][j][i] - meanConvergenceAccuracyOnlineLog[n][j])**2
 					if totalSmooth != 1:
 						sdConvergenceAccuracyOnline[n][j] /= (totalSmooth - 1)
+						sdConvergenceAccuracyOnlineLog[n][j] /= (totalSmooth - 1)
 						sdConvergenceAccuracyOnline[n][j] = sqrt(sdConvergenceAccuracyOnline[n][j])
+						sdConvergenceAccuracyOnlineLog[n][j] = sqrt(sdConvergenceAccuracyOnlineLog[n][j])
 						
 			if offline:
 				meanConvergenceAccuracyOffline[n] = [0 for i in range(len(convergenceAccuracyOffline[n]))]
+				meanConvergenceAccuracyOfflineLog[n] = [0 for i in range(len(convergenceAccuracyOfflineLog[n]))]
 				sdConvergenceAccuracyOffline[n] = [0 for i in range(len(convergenceAccuracyOffline[n]))]
+				sdConvergenceAccuracyOfflineLog[n] = [0 for i in range(len(convergenceAccuracyOfflineLog[n]))]
 				for j in range(len(meanConvergenceAccuracyOffline[n])):
 					for i in range(len(convergenceAccuracyOffline[n][j])):
 						meanConvergenceAccuracyOffline[n][j] += convergenceAccuracyOffline[n][j][i]
+						meanConvergenceAccuracyOfflineLog[n][j] += convergenceAccuracyOfflineLog[n][j][i]
 					meanConvergenceAccuracyOffline[n][j] /= len(convergenceAccuracyOffline[n][j])
+					meanConvergenceAccuracyOfflineLog[n][j] /= len(convergenceAccuracyOfflineLog[n][j])
 					for i in range(len(convergenceAccuracyOffline[n][j])):
 						sdConvergenceAccuracyOffline[n][j] += (convergenceAccuracyOffline[n][j][i] - meanConvergenceAccuracyOffline[n][j])**2
+						sdConvergenceAccuracyOfflineLog[n][j] += (convergenceAccuracyOfflineLog[n][j][i] - meanConvergenceAccuracyOfflineLog[n][j])**2
 					if len(convergenceAccuracyOffline[n][j]) != 1:
 						sdConvergenceAccuracyOffline[n][j] /= (len(convergenceAccuracyOffline[n][j]) - 1)
+						sdConvergenceAccuracyOfflineLog[n][j] /= (len(convergenceAccuracyOfflineLog[n][j]) - 1)
 						sdConvergenceAccuracyOffline[n][j] = sqrt(sdConvergenceAccuracyOffline[n][j])
+						sdConvergenceAccuracyOfflineLog[n][j] = sqrt(sdConvergenceAccuracyOfflineLog[n][j])
 	
 	print()
 	if online:
@@ -510,7 +561,7 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 		learnedCPNetOffline[no[0]].displayCPNetInfo()
 		print()
 	
-	return averageCycleSize2,meanAccOnline,meanAccOnlineLog,sdAOnline,sdAOnlineLog,meanAccOffline,meanAccOfflineLog,sdAOffline,sdAOfflineLog,meanTOnline,sdTOnline,meanIT,sdIT,meanTOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,dataset.lenOfFold,dataset.numberOfAttributes,meanConvergenceAccuracyOnline,sdConvergenceAccuracyOnline,meanConvergenceAccuracyOffline,sdConvergenceAccuracyOffline
+	return averageCycleSize2,meanAccOnline,meanAccOnlineLog,sdAOnline,sdAOnlineLog,meanAccOffline,meanAccOfflineLog,sdAOffline,sdAOfflineLog,meanTOnline,sdTOnline,meanIT,sdIT,meanTOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,dataset.lenOfFold,dataset.numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog
 
 
 
@@ -537,8 +588,6 @@ def displayResults(modeForDatasetGeneration,averageCycleSize2,percentageOfNoise,
 				s += "For noise = " + str(n) + "% (" + str(round(averageCycleSize2[n],2)) + "% of cycles of size 2),\nwe obtain for the ONLINE version:\n" + str(round(aOnline[n],2)) + "% of agreement *" + str(int(aOnline[n]/100*lenOfFold)) + "/" + str(lenOfFold) + " comparisons* (sd = " + str(round(sdAOnline[n],2)) + "%),\nwe obtain for the ONLINE version:\n" + str(round(aOnlineLog[n],2)) + " of log loss (sd = " + str(round(sdAOnlineLog[n],2)) + "%),\naccuracy for unnoised dataset: " + str(meanAccNoiseOnline[n]) + "% (difference with actual noised dataset: " + str(round(meanAccNoiseOnline[0] - meanAccNoiseOnline[n],1)) + "),\nerror for unnoised dataset: " + str(meanAccNoiseOnlineLog[n]) + "% (difference with actual noised dataset: " + str(round(meanAccNoiseOnlineLog[n] - meanAccNoiseOnlineLog[0],1)) + "),\ncomputation takes " + str(round(tOnline[n],4)) + " seconds (sd = " + str(round(sdTOnline[n],4)) + " seconds),\nthe computation of one iteration takes " + str(round(meanIT[n]*1000,4)) + " milliseconds (sd = " + str(round(sdIT[n]*1000,4)) + " milliseconds).\n"
 			if offline:
 				s += "For noise = " + str(n) + "% (" + str(round(averageCycleSize2[n],2)) + "% of cycles of size 2),\nwe obtain for the OFFLINE version:\n" + str(round(aOffline[n],2)) + "% of agreement *" + str(int(aOffline[n]/100*lenOfFold)) + "/" + str(lenOfFold) + " comparisons* (sd = " + str(round(sdAOffline[n],2)) + "%),\nwe obtain for the OFFLINE version:\n" + str(round(aOfflineLog[n],2)) + " of log loss (sd = " + str(round(sdAOfflineLog[n],2)) + "%),\naccuracy for unnoised dataset: " + str(meanAccNoiseOffline[n]) + "% (difference with actual noised dataset: " + str(round(meanAccNoiseOffline[0] - meanAccNoiseOffline[n],1)) + "),\nerror for unnoised dataset: " + str(meanAccNoiseOfflineLog[n]) + "% (difference with actual noised dataset: " + str(round(meanAccNoiseOfflineLog[n] - meanAccNoiseOfflineLog[0],1)) + "),\ncomputation takes " + str(round(tOffline[n],4)) + " seconds (sd = " + str(round(sdTOffline[n],4)) + " seconds).\n"
-				
-				#s += "For noise = " + str(n) + "% (" + str(round(averageCycleSize2[n],2)) + "% of cycles of size 2),\nwe obtain for the OFFLINE version:\n" + str(round(aOffline[n],2)) + "% of agreement *" + str(int(aOffline[n]/100*lenOfFold)) + "/" + str(lenOfFold) + " comparisons* (sd = " + str(round(sdAOffline[n],2)) + "%),\naccuracy for unnoised dataset: " + str(meanAccNoiseOffline[n]) + "% (difference with actual noised dataset: " + str(round(meanAccNoiseOffline[0] - meanAccNoiseOffline[n],1)) + "),\ncomputation takes " + str(round(tOffline[n],4)) + " seconds (sd = " + str(round(sdTOffline[n],4)) + " seconds).\n"
 	else:
 		
 		if online:
