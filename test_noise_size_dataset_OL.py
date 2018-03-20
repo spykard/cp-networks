@@ -2,7 +2,7 @@ from src.learnCPnet import *
 
 modeForDatasetGeneration = 2 # 1 = read a file, 2 = generate a synthetic database
 nameOfFile = "databases/sushi_30Users_10000Comparisons.data"
-numberOfComparisons = [500000,150000,1500000] # -1 = all of the comparisons in file
+numberOfComparisons = [50000,150000,1500000] # -1 = all of the comparisons in file
 percentageOfNoise = [0,10] # between 0 and 50
 numberOfVariables = 12 # -1 = automatically choose from the number of comparisons
 numberOfEdgesLambda = -1 # -1 = infinity
@@ -25,7 +25,7 @@ decisionMode = 2
 
 
 
-for numberOfComparisons in [500000,150000,1500000]:
+for numberOfComparisons in [50000,150000,1500000]:
 	fileTestOL = {}
 	for i in percentageOfNoise:
 		fileTestOL[i] = open("test-results/test_time_size_database_" + str(i) + "_noise_" + str(numberOfComparisons) + "_Online.dat","w")
