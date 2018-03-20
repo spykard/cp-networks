@@ -1,9 +1,0 @@
-lambda 1 var 4 acc 100.0
-lambda 1 var 8 acc 100.0
-lambda 1 var 12 acc 100.0
-lambda 3 var 4 acc 100.0
-lambda 3 var 8 acc 100.0
-lambda 3 var 12 acc 97.0755
-lambda -1 var 4 acc 100.0
-lambda -1 var 8 acc 100.0
-lambda -1 var 12 acc 100.0
