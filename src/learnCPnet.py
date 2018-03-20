@@ -70,7 +70,6 @@ def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,epsilonThreshold,
 					if N[n].fitCPNet(N[n].returnRule(N[n].getVariable(comparison[2]),comparison[0],comparison[1])):
 						correctComp += 1
 						correctCompLog[comparison[2]] += 1
-				print(len(data[n]),cpt,cpt//(int(len(data[n])/1000)))
 				convergenceAccuracyOnline[n][cpt//(int(len(data[n])/1000))].append(correctComp/lenOfFold*100)
 				sum = 0
 				for i in range(len(N[n].variables)):
