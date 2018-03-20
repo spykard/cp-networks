@@ -1,7 +1,6 @@
 from src.learnCPnet import *
 
 modeForDatasetGeneration = 2 # 1 = read a file, 2 = generate a synthetic database
-bagging = False
 nameOfFile = "databases/sushi_30Users_10000Comparisons.data"
 numberOfComparisons = 1500000 # -1 = all of the comparisons in file
 percentageOfNoise = [0,10,20,30,40,50,60,70,80,90,100] # between 0 and 50
@@ -12,7 +11,7 @@ numberOfParentsForLearnedCPNet = -1 # -1 = infinity
 numberOfRoundsForFileGeneration = 1
 numberOfRoundsForLearningProcedure = 10 # = percentage taken in the dataset for the cross validation
 
-numberOfRounds = 3
+numberOfRounds = 1
 
 decisionThresholdBis = 0.1 # delta for decisionMode = 1
 epsilonThreshold = 0.05 # threshold for epsilon
@@ -26,12 +25,14 @@ autorizedCycle = False
 # 1 = McDiarmid for conditioned variable, 2 = McDiarmid for conditioned AND conditional variables
 decisionMode = 2
 
+
+
 dataset = []
 for i in range(numberOfRounds):
 	dataset.append(Database(step = 1,smooth = 1,mode = modeForDatasetGeneration, filename = nameOfFile, nC = numberOfComparisons, noise = percentageOfNoise, nbV = numberOfVariables,lb = numberOfEdgesLambda,nbP = numberOfParentsForTargetCPNet,k = numberOfRoundsForLearningProcedure))
 
 
-# Test noise accuracy
+# test noise accuracy
 fileTestNoiseHL = {}
 for i in [0,10,20,40]:
 	fileTestNoiseHL[i] = open("test-results/test_acc_noise" + str(i) + "_Offline.dat","w")

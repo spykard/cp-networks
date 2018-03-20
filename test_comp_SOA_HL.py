@@ -2,7 +2,7 @@ from src.learnCPnet import *
 
 modeForDatasetGeneration = 2 # 1 = read a file, 2 = generate a synthetic database
 nameOfFile = "databases/sushi_30Users_10000Comparisons.data"
-numberOfComparisons = 1500000 # -1 = all of the comparisons in file
+numberOfComparisons = 200000 # -1 = all of the comparisons in file
 percentageOfNoise = [0] # between 0 and 50
 numberOfVariables = [4,8,12] # -1 = automatically choose from the number of comparisons
 numberOfEdgesLambda = [1,3,-1] # -1 = infinity
@@ -16,7 +16,7 @@ epsilonThreshold = 0.05 # threshold for epsilon
 
 convergence = False
 
-online = True
+online = False
 offline = True
 autorizedCycle = False
 
@@ -28,7 +28,7 @@ decisionMode = 2
 fileTestHL = open("test-results/test_comp_soa_Offline.dat","w")
 for numberOfEdgesLambda in [1,3,-1]:
 	for numberOfVariables in [4,8,12]:
-		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,200000,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,False,True,decisionMode,None,autorizedCycle)
+		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,online,offline,decisionMode,None,autorizedCycle)
 		fileTestHL.write("lambda " + str(numberOfEdgesLambda) + " var " + str(numberOfVariables) + " acc " + str(aOffline[0]) + "\n")
 fileTestHL.close()
 

@@ -1,7 +1,6 @@
 from src.learnCPnet import *
 
 modeForDatasetGeneration = 2 # 1 = read a file, 2 = generate a synthetic database
-bagging = False
 nameOfFile = "databases/sushi_30Users_10000Comparisons.data"
 numberOfComparisons = [10000,100000,250000,500000] # -1 = all of the comparisons in file
 percentageOfNoise = [0,10] # between 0 and 50
@@ -23,6 +22,8 @@ autorizedCycle = False
 
 # 1 = McDiarmid for conditioned variable, 2 = McDiarmid for conditioned AND conditional variables
 decisionMode = 2
+
+
 
 for numberOfComparisons in [5000,50000,200000]:
 	fileTestHL = {}
