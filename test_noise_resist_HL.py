@@ -31,6 +31,10 @@ dataset = []
 for i in range(numberOfRounds):
 	dataset.append(Database(step = 1,smooth = 1,mode = modeForDatasetGeneration, filename = nameOfFile, nC = numberOfComparisons, noise = percentageOfNoise, nbV = numberOfVariables,lb = numberOfEdgesLambda,nbP = numberOfParentsForTargetCPNet,k = numberOfRoundsForLearningProcedure))
 
+accOffline = {}
+accOfflineLog = {}
+sdOffline = {}
+sdOfflineLog = {}
 for n in percentageOfNoise:
 	accOffline[n] = 0
 	accOfflineLog[n] = 0

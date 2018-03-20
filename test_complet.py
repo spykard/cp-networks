@@ -110,6 +110,10 @@ for i in [0,10,20,40]:
 	fileTest[i].close()
 
 # test noise resist
+accOffline = {}
+accOfflineLog = {}
+sdOffline = {}
+sdOfflineLog = {}
 for n in percentageOfNoise:
 	accOffline[n] = 0
 	accOfflineLog[n] = 0
@@ -141,6 +145,10 @@ for i in range(1,len(tab1)):
 	convfileTestOffline.write(str(tab1[i][0]) + " " + str(abs(tab1[0][1] - tab1[i][1])) + " " + str((tab2[0][1] + tab2[i][1])/2) + " " + str(abs(tab3[i][1])) + " " + str(tab4[i][1]) + "\n")
 convfileTestOffline.close()
 
+accOnline = {}
+accOnlineLog = {}
+sdOnline = {}
+sdOnlineLog = {}
 for n in percentageOfNoise:
 	accOnline[n] = 0
 	accOnlineLog[n] = 0
