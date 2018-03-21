@@ -1,10 +1,9 @@
-lambda 1 var 4 acc 100.0
+lambda 1 var 4 acc 98.751
 lambda 1 var 8 acc 100.0
-lambda 1 var 12 acc 100.0
-lambda 3 var 4 acc 96.89293333333333
-lambda 3 var 8 acc 99.22066666666667
-lambda 3 var 12 acc 99.2226
-lambda -1 var 4 acc 93.73060000000001
-lambda -1 var 8 acc 98.89973333333333
-lambda -1 var 12 acc 94.12086666666666
-13333333333
+lambda 1 var 12 acc 98.75173333333333
+lambda 3 var 4 acc 93.75026666666668
+lambda 3 var 8 acc 98.59533333333334
+lambda 3 var 12 acc 99.21013333333333
+lambda -1 var 4 acc 92.49413333333334
+lambda -1 var 8 acc 99.0462
+lambda -1 var 12 acc 97.6416
