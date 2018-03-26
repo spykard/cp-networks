@@ -3,7 +3,7 @@ from src.learnCPnet import *
 modeForDatasetGeneration = 2 # 1 = read a file, 2 = generate a synthetic database
 nameOfFile = "databases/sushi_30Users_10000Comparisons.data"
 numberOfComparisons = 1500000 # -1 = all of the comparisons in file
-percentageOfNoise = [0,10,20,40] # between 0 and 50
+percentageOfNoise = [0,10,20] # between 0 and 50
 numberOfVariables = 12 # -1 = automatically choose from the number of comparisons
 numberOfEdgesLambda = -1 # -1 = infinity
 numberOfParentsForTargetCPNet = -1 # -1 = infinity
@@ -34,7 +34,7 @@ for i in range(numberOfRounds):
 fileTest = {}
 for i in percentageOfNoise:
 	fileTest[i] = open("test-results/test_hyperparameter_" + str(i) + ".dat","w")
-for decisionThresholdBis in [0,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.1,0.11,0.12,0.13,0.14,0.15,0.16,0.17,0.18,0.19,0.2]:
+for decisionThresholdBis in [0,0.02,0.04,0.06,0.08,0.1,0.12,0.14,0.16,0.18,0.2]:
 	accOnline = {}
 	accOnlineLog = {}
 	sdOnline = {}

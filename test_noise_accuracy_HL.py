@@ -3,7 +3,7 @@ from src.learnCPnet import *
 modeForDatasetGeneration = 2 # 1 = read a file, 2 = generate a synthetic database
 nameOfFile = "databases/sushi_30Users_10000Comparisons.data"
 numberOfComparisons = 200000 # -1 = all of the comparisons in file
-percentageOfNoise = [0,10,20,40] # between 0 and 50
+percentageOfNoise = [0,10,20] # between 0 and 50
 numberOfVariables = 12 # -1 = automatically choose from the number of comparisons
 numberOfEdgesLambda = -1 # -1 = infinity
 numberOfParentsForTargetCPNet = -1 # -1 = infinity
@@ -34,7 +34,7 @@ for i in range(numberOfRounds):
 fileTestNoiseHL = {}
 for i in percentageOfNoise:
 	fileTestNoiseHL[i] = open("test-results/test_acc_noise" + str(i) + "_Offline.dat","w")
-for numberOfParentsForLearnedCPNet in [0,1,2,6,8,11]:
+for numberOfParentsForLearnedCPNet in [0,1,2,4,6,8,11]:
 	accOffline = {}
 	accOfflineLog = {}
 	sdOffline = {}
