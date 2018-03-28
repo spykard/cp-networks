@@ -122,10 +122,10 @@ for n in percentageOfNoise:
 for i in range(numberOfRounds):
 	averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,200000,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,False,True,decisionMode,dataset[i],autorizedCycle)
 	for n in percentageOfNoise:
-		accOffline[n] += aOffline[n]
-		accOfflineLog[n] += aOfflineLog[n]
-		sdOffline[n] += sdAOffline[n]
-		sdOfflineLog[n] += sdAOfflineLog[n]
+		accOffline[n] += meanAccNoiseOffline[n]
+		accOfflineLog[n] += meanAccNoiseOfflineLog[n]
+		sdOffline[n] += sdANoiseOffline[n]
+		sdOfflineLog[n] += sdANoiseOfflineLog[n]
 convfileTestOffline = open("test-results/test_noise_resist_Offline.dat","w")
 tab1 = []
 tab2 = []
@@ -157,10 +157,10 @@ for n in percentageOfNoise:
 for i in range(numberOfRounds):
 	averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,1500000,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,True,False,decisionMode,dataset[i],autorizedCycle)
 	for n in percentageOfNoise:
-		accOnline[n] += aOnline[n]
-		accOnlineLog[n] += aOnlineLog[n]
-		sdOnline[n] += sdAOnline[n]
-		sdOnlineLog[n] += sdAOnlineLog[n]
+		accOnline[n] += meanAccNoiseOnline[n]
+		accOnlineLog[n] += meanAccNoiseOnlineLog[n]
+		sdOnline[n] += sdANoiseOnline[n]
+		sdOnlineLog[n] += sdANoiseOnlineLog[n]
 convfileTestOnline = open("test-results/test_noise_resist_Online.dat","w")
 tab1 = []
 tab2 = []
