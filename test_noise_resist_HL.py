@@ -47,7 +47,7 @@ for i in range(numberOfRounds):
 		accOfflineLog[n] += meanAccNoiseOfflineLog[n]
 		sdOffline[n] += sdANoiseOffline[n]
 		sdOfflineLog[n] += sdANoiseOfflineLog[n]
-convfileTestOffline = open("test-results/test_noise_resist_Offline.dat","w")
+convfileTestOffline = open("test-results/test_noise_resist_Offline_bis.dat","w")
 tab1 = []
 tab2 = []
 tab3 = []
@@ -63,5 +63,7 @@ tab3.sort()
 tab4.sort()
 convfileTestOffline.write("0 0.0 0.0 0.0 0.0\n")
 for i in range(1,len(tab1)):
-	convfileTestOffline.write(str(tab1[i][0]) + " " + str(abs(tab1[0][1] - tab1[i][1])) + " " + str((tab2[0][1] + tab2[i][1])/2) + " " + str(abs(tab3[i][1])) + " " + str(tab4[i][1]) + "\n")
+	# convfileTestOffline.write(str(tab1[i][0]) + " " + str(abs(tab1[0][1] - tab1[i][1])) + " " + str((tab2[0][1] + tab2[i][1])/2) + " " + str(abs(tab3[i][1])) + " " + str(tab4[i][1]) + "\n")
+	convfileTestOffline.write(str(tab1[i][0]) + " " + str(1 - tab1[i][1]) + " " + str(tab2[i][1]) + " " + str(abs(tab3[i][1])) + " " + str(tab4[i][1]) + "\n")
+
 convfileTestOffline.close()

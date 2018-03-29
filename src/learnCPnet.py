@@ -329,7 +329,7 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 						correctCompOffline += 1
 						correctCompOfflineLog[comparison[2]] += 1
 				
-				# comparison with the unnoisy dataset
+				# comparison with the unnoised dataset
 				if online:
 					correctCompNoiseOnline = 0
 					correctCompNoiseOnlineLog = []
