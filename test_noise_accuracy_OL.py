@@ -36,22 +36,34 @@ for i in percentageOfNoise:
 	fileTestNoiseOL[i] = open("test-results/test_acc_noise" + str(i) + "_Online.dat","w")
 for numberOfParentsForLearnedCPNet in [0,1,2,4,6,8,11]:
 	accOnline = {}
+	accNoiseOnline = {}
 	accOnlineLog = {}
+	accNoiseOnlineLog = {}
 	sdOnline = {}
+	sdNoiseOnline = {}
 	sdOnlineLog = {}
+	sdNoiseOnlineLog = {}
 	for n in percentageOfNoise:
 		accOnline[n] = 0
+		accNoiseOnline[n] = 0
 		accOnlineLog[n] = 0
+		accNoiseOnlineLog[n] = 0
 		sdOnline[n] = 0
+		sdNoiseOnline[n] = 0
 		sdOnlineLog[n] = 0
+		sdNoiseOnlineLog[n] = 0
 	for i in range(numberOfRounds):
 		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,online,offline,decisionMode,dataset[i],autorizedCycle)
 		for n in percentageOfNoise:
 			accOnline[n] += aOnline[n]
+			accNoiseOnline[n] += meanAccNoiseOnline[n]
 			accOnlineLog[n] += aOnlineLog[n]
+			accNoiseOnlineLog[n] += meanAccNoiseOnlineLog[n]
 			sdOnline[n] += sdAOnline[n]
+			sdNoiseOnline[n] += sdANoiseOnline[n]
 			sdOnlineLog[n] += sdAOnlineLog[n]
+			sdNoiseOnlineLog[n] += sdANoiseOnlineLog[n]
 	for i in percentageOfNoise:
-		fileTestNoiseOL[i].write(str(numberOfParentsForLearnedCPNet) + " " + str(accOnline[i]/numberOfRounds) + " " + str(sdOnline[i]/numberOfRounds) + " " + str(accOnlineLog[i]/numberOfRounds) + " " + str(sdOnlineLog[i]/numberOfRounds) + "\n")
+		fileTestNoiseOL[i].write(str(numberOfParentsForLearnedCPNet) + " " + str(accOnline[i]/numberOfRounds) + " " + str(sdOnline[i]/numberOfRounds) + " " + str(accOnlineLog[i]/numberOfRounds) + " " + str(sdOnlineLog[i]/numberOfRounds) + str(accNoiseOnline[i]/numberOfRounds) + " " + str(sdNoiseOnline[i]/numberOfRounds) + " " + str(accNoiseOnlineLog[i]/numberOfRounds) + " " + str(sdNoiseOnlineLog[i]/numberOfRounds) + "\n")
 for i in percentageOfNoise:
 	fileTestNoiseOL[i].close()
