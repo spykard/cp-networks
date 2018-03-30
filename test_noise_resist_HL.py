@@ -63,7 +63,6 @@ tab3.sort()
 tab4.sort()
 convfileTestOffline.write("0 0.0 0.0 0.0 0.0\n")
 for i in range(1,len(tab1)):
-	# convfileTestOffline.write(str(tab1[i][0]) + " " + str(abs(tab1[0][1] - tab1[i][1])) + " " + str((tab2[0][1] + tab2[i][1])/2) + " " + str(abs(tab3[i][1])) + " " + str(tab4[i][1]) + "\n")
 	convfileTestOffline.write(str(tab1[i][0]) + " " + str(100 - tab1[i][1]) + " " + str(tab2[i][1]) + " " + str(abs(tab3[i][1])) + " " + str(tab4[i][1]) + "\n")
 
 convfileTestOffline.close()
