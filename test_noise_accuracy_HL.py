@@ -65,6 +65,6 @@ for numberOfParentsForLearnedCPNet in [0,1,2,4,6,8,11]:
 			sdOfflineLog[n] += sdAOfflineLog[n]
 			sdNoiseOfflineLog[n] += sdANoiseOfflineLog[n]
 	for i in percentageOfNoise:
-		fileTestNoiseHL[i].write(str(numberOfParentsForLearnedCPNet) + " " + str(accOffline[i]/numberOfRounds) + " " + str(sdOffline[i]/numberOfRounds) + " " + str(accOfflineLog[i]/numberOfRounds) + " " + str(sdOfflineLog[i]/numberOfRounds) + str(accNoiseOffline[i]/numberOfRounds) + " " + str(sdNoiseOffline[i]/numberOfRounds) + " " + str(accNoiseOfflineLog[i]/numberOfRounds) + " " + str(sdNoiseOfflineLog[i]/numberOfRounds) + "\n")
+		fileTestNoiseHL[i].write(str(numberOfParentsForLearnedCPNet) + " " + str(accOffline[i]/numberOfRounds) + " " + str(sdOffline[i]/numberOfRounds) + " " + str(accOfflineLog[i]/numberOfRounds) + " " + str(sdOfflineLog[i]/numberOfRounds) + " " + str(accNoiseOffline[i]/numberOfRounds) + " " + str(sdNoiseOffline[i]/numberOfRounds) + " " + str(accNoiseOfflineLog[i]/numberOfRounds) + " " + str(sdNoiseOfflineLog[i]/numberOfRounds) + "\n")
 for i in percentageOfNoise:
 	fileTestNoiseHL[i].close()
