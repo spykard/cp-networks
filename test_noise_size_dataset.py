@@ -32,7 +32,7 @@ for numberOfComparisons in [5000,50000,200000]:
 	for numberOfParentsForLearnedCPNet in [0,1,2,6,8,11]:
 		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,False,True,decisionMode,None,autorizedCycle)
 		for i in percentageOfNoise:
-			fileTestHL[i].write(str(numberOfParentsForLearnedCPNet) + " " + str(aOffline[i]) + " " + str(sdAOffline[i]) + " " + str(aOfflineLog[i]) + " " + str(sdAOfflineLog[i]) + "\n")
+			fileTestHL[i].write(str(numberOfParentsForLearnedCPNet) + " " + str(aOffline[i]) + " " + str(sdAOffline[i]) + " " + str(aOfflineLog[i]) + " " + str(sdAOfflineLog[i]) + " " + str(meanAccNoiseOffline[i]) + " " + str(sdANoiseOffline[i]) + " " + str(meanAccNoiseOfflineLog[i]) + " " + str(sdANoiseOfflineLog[i]) + "\n")
 	for i in percentageOfNoise:
 		fileTestHL[i].close()
 
@@ -43,6 +43,6 @@ for numberOfComparisons in [500000,150000,1500000]:
 	for numberOfParentsForLearnedCPNet in [0,1,2,6,8,11]:
 		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,True,False,decisionMode,None,autorizedCycle)
 		for i in percentageOfNoise:
-			fileTestOL[i].write(str(numberOfParentsForLearnedCPNet) + " " + str(aOnline[i]) + " " + str(sdAOnline[i]) + " " + str(aOnlineLog[i]) + " " + str(sdAOnlineLog[i]) + "\n")
+			fileTestOL[i].write(str(numberOfParentsForLearnedCPNet) + " " + str(aOnline[i]) + " " + str(sdAOnline[i]) + " " + str(aOnlineLog[i]) + " " + str(sdAOnlineLog[i]) + " " + str(meanAccNoiseOnline[i]) + " " + str(sdANoiseOnline[i]) + " " + str(meanAccNoiseOnlineLog[i]) + " " + str(sdANoiseOnlineLog[i]) + "\n")
 	for i in percentageOfNoise:
 		fileTestOL[i].close()
