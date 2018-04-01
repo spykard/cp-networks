@@ -4,7 +4,7 @@ from math import *
 modeForDatasetGeneration = 2 # 1 = read a file, 2 = generate a synthetic database
 nameOfFile = "databases/sushi_30Users_10000Comparisons.data"
 numberOfComparisons = 500000 # -1 = all of the comparisons in file
-percentageOfNoise = [0,20] # between 0 and 50
+percentageOfNoise = [0,10] # between 0 and 50
 numberOfVariables = 12 # -1 = automatically choose from the number of comparisons
 numberOfEdgesLambda = -1 # -1 = infinity
 numberOfParentsForTargetCPNet = -1 # -1 = infinity
