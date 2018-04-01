@@ -34,7 +34,7 @@ for i in range(numberOfRounds):
 
 # test noise accuracy
 fileTestNoiseHL = {}
-for i in [0,10,20,40]:
+for i in [0,10,20]:
 	fileTestNoiseHL[i] = open("test-results/test_acc_noise" + str(i) + "_Offline.dat","w")
 for numberOfParentsForLearnedCPNet in [0,1,2,6,8,11]:
 	accOffline = {}
@@ -45,7 +45,7 @@ for numberOfParentsForLearnedCPNet in [0,1,2,6,8,11]:
 	sdNoiseOffline = {}
 	sdOfflineLog = {}
 	sdNoiseOfflineLog = {}
-	for n in [0,10,20,40]:
+	for n in [0,10,20]:
 		accOffline[n] = 0
 		accNoiseOffline[n] = 0
 		accOfflineLog[n] = 0
@@ -55,8 +55,8 @@ for numberOfParentsForLearnedCPNet in [0,1,2,6,8,11]:
 		sdOfflineLog[n] = 0
 		sdNoiseOfflineLog[n] = 0
 	for i in range(numberOfRounds):
-		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,200000,[0,10,20,40],numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,False,True,decisionMode,dataset[i],autorizedCycle)
-		for n in [0,10,20,40]:
+		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,200000,[0,10,20],numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,False,True,decisionMode,dataset[i],autorizedCycle)
+		for n in [0,10,20]:
 			accOffline[n] += aOffline[n]
 			accNoiseOffline[n] += meanAccNoiseOffline[n]
 			accOfflineLog[n] += aOfflineLog[n]
@@ -65,13 +65,13 @@ for numberOfParentsForLearnedCPNet in [0,1,2,6,8,11]:
 			sdNoiseOffline[n] += sdANoiseOffline[n]
 			sdOfflineLog[n] += sdAOfflineLog[n]
 			sdNoiseOfflineLog[n] += sdANoiseOfflineLog[n]
-	for i in [0,10,20,40]:
+	for i in [0,10,20]:
 		fileTestNoiseHL[i].write(str(numberOfParentsForLearnedCPNet) + " " + str(accOffline[i]/numberOfRounds) + " " + str(sdOffline[i]/numberOfRounds) + " " + str(accOfflineLog[i]/numberOfRounds) + " " + str(sdOfflineLog[i]/numberOfRounds) + " " + str(accNoiseOffline[i]/numberOfRounds) + " " + str(sdNoiseOffline[i]/numberOfRounds) + " " + str(accNoiseOfflineLog[i]/numberOfRounds) + " " + str(sdNoiseOfflineLog[i]/numberOfRounds) + "\n")
-for i in [0,10,20,40]:
+for i in [0,10,20]:
 	fileTestNoiseHL[i].close()
 	
 fileTestNoiseOL = {}
-for i in [0,10,20,40]:
+for i in [0,10,20]:
 	fileTestNoiseOL[i] = open("test-results/test_acc_noise" + str(i) + "_Online.dat","w")
 for numberOfParentsForLearnedCPNet in [0,1,2,6,8,11]:
 	accOnline = {}
@@ -82,7 +82,7 @@ for numberOfParentsForLearnedCPNet in [0,1,2,6,8,11]:
 	sdNoiseOnline = {}
 	sdOnlineLog = {}
 	sdNoiseOnlineLog = {}
-	for n in [0,10,20,40]:
+	for n in [0,10,20]:
 		accOnline[n] = 0
 		accNoiseOnline[n] = 0
 		accOnlineLog[n] = 0
@@ -92,8 +92,8 @@ for numberOfParentsForLearnedCPNet in [0,1,2,6,8,11]:
 		sdOnlineLog[n] = 0
 		sdNoiseOnlineLog[n] = 0
 	for i in range(numberOfRounds):
-		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,1500000,[0,10,20,40],numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,True,False,decisionMode,dataset[i],autorizedCycle)
-		for n in [0,10,20,40]:
+		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,1500000,[0,10,20],numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,True,False,decisionMode,dataset[i],autorizedCycle)
+		for n in [0,10,20]:
 			accOnline[n] += aOnline[n]
 			accNoiseOnline[n] += meanAccNoiseOnline[n]
 			accOnlineLog[n] += aOnlineLog[n]
@@ -102,16 +102,16 @@ for numberOfParentsForLearnedCPNet in [0,1,2,6,8,11]:
 			sdNoiseOnline[n] += sdANoiseOnline[n]
 			sdOnlineLog[n] += sdAOnlineLog[n]
 			sdNoiseOnlineLog[n] += sdANoiseOnlineLog[n]
-	for i in [0,10,20,40]:
+	for i in [0,10,20]:
 		fileTestNoiseOL[i].write(str(numberOfParentsForLearnedCPNet) + " " + str(accOnline[i]/numberOfRounds) + " " + str(sdOnline[i]/numberOfRounds) + " " + str(accOnlineLog[i]/numberOfRounds) + " " + str(sdOnlineLog[i]/numberOfRounds) + " " + str(accNoiseOnline[i]/numberOfRounds) + " " + str(sdNoiseOnline[i]/numberOfRounds) + " " + str(accNoiseOnlineLog[i]/numberOfRounds) + " " + str(sdNoiseOnlineLog[i]/numberOfRounds) + "\n")
 for i in [0,10,20,40]:
 	fileTestNoiseOL[i].close()
 
 # test hyperparameter
 fileTest = {}
-for i in [0,10,20,40]:
+for i in [0,10,20]:
 	fileTest[i] = open("test-results/test_hyperparameter_" + str(i) + ".dat","w")
-for decisionThresholdBis in [0,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.1,0.11,0.12,0.13,0.14,0.15,0.16,0.17,0.18,0.19,0.2]:
+for decisionThresholdBis in [0,0.02,0.04,0.06,0.08,0.1,0.12,0.14,0.16,0.18,0.2]:
 	accOnline = {}
 	accNoiseOnline = {}
 	accOnlineLog = {}
@@ -120,7 +120,7 @@ for decisionThresholdBis in [0,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.1,
 	sdNoiseOnline = {}
 	sdOnlineLog = {}
 	sdNoiseOnlineLog = {}
-	for n in [0,10,20,40]:
+	for n in [0,10,20]:
 		accOnline[n] = 0
 		accNoiseOnline[n] = 0
 		accOnlineLog[n] = 0
@@ -130,8 +130,8 @@ for decisionThresholdBis in [0,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.1,
 		sdOnlineLog[n] = 0
 		sdNoiseOnlineLog[n] = 0
 	for i in range(numberOfRounds):
-		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,1500000,[0,10,20,40],numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,True,False,decisionMode,dataset[i],autorizedCycle)
-		for n in [0,10,20,40]:
+		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,1500000,[0,10,20],numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,True,False,decisionMode,dataset[i],autorizedCycle)
+		for n in [0,10,20]:
 			accOnline[n] += aOnline[n]
 			accNoiseOnline[n] += meanAccNoiseOnline[n]
 			accOnlineLog[n] += aOnlineLog[n]
@@ -140,9 +140,9 @@ for decisionThresholdBis in [0,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.1,
 			sdNoiseOnline[n] += sdANoiseOnline[n]
 			sdOnlineLog[n] += sdAOnlineLog[n]
 			sdNoiseOnlineLog[n] += sdANoiseOnlineLog[n]
-	for i in [0,10,20,40]:
+	for i in [0,10,20]:
 		fileTest[i].write(str(decisionThresholdBis) + " " + str(accOnline[i]/numberOfRounds) + " " + str(sdOnline[i]/numberOfRounds) + " " + str(accOnlineLog[i]/numberOfRounds) + " " + str(sdOnlineLog[i]/numberOfRounds) + " " + str(accNoiseOnline[i]/numberOfRounds) + " " + str(sdNoiseOnline[i]/numberOfRounds) + " " + str(accNoiseOnlineLog[i]/numberOfRounds) + " " + str(sdNoiseOnlineLog[i]/numberOfRounds) + "\n")
-for i in [0,10,20,40]:
+for i in [0,10,20]:
 	fileTest[i].close()
 
 # test noise resist
