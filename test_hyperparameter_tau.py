@@ -33,8 +33,8 @@ for i in range(numberOfRounds):
 
 fileTest = {}
 for i in percentageOfNoise:
-	fileTest[i] = open("test-results/test_hyperparameter_" + str(i) + ".dat","w")
-for decisionThresholdBis in [0,0.02,0.04,0.06,0.08,0.1,0.12,0.14,0.16,0.18,0.2]:
+	fileTest[i] = open("test-results/test_hyperparameter_tau_" + str(i) + ".dat","w")
+for epsilonThreshold in [0,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.1]:
 	accOnline = {}
 	accNoiseOnline = {}
 	accOnlineLog = {}
