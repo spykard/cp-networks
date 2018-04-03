@@ -4,9 +4,10 @@ import time
 from random import *
 from math import *
 
-def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,epsilonThreshold,nbOfParents,lenOfFold,convergence,convergenceAccuracyOnline,convergenceAccuracyOnlineLog,noise,computationTimeOnline,iterationTime,decisionMode,autorizedCycle):
+def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,epsilonThreshold,nbOfParents,lenOfFold,convergence,convergenceAccuracyOnline,convergenceAccuracyOnlineLog,noise,computationTimeOnline,iterationTime,decisionMode,autorizedCycle,requiredSwapOnline):
 	N = {}
 	for n in noise:
+		requiredSwaps = []
 		shuffle(data[n])
 		
 		print("\tfor the " + str(n) + "% noised dataset:")
@@ -45,12 +46,16 @@ def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,epsilonThreshold,
 			if decisionMode == 1:
 				dec,candVariable = N[n].decision(dtBis,decisionMode,cpt)[:2]
 				if dec and N[n].addParent(candVariable,False,decisionMode,nbOfParents,autorizedCycle):
+					if n == 0:
+						requiredSwaps.append(candVariable.time)
 					print("\t\t\t" + str(cpt + 1) + "th comparison:\t\tvariable " + str(candVariable.id + 1) + " receives a new parent variable...")
 			
 			# entropy for couple of variables
 			if decisionMode == 2:
 				dec,candVariable,candParVariable = N[n].decision(dtBis,epsilonThreshold,decisionMode,cpt)
 				if dec and N[n].addParentNewVersion(candVariable,candParVariable,False,nbOfParents,autorizedCycle,decisionMode):
+					if n == 0:
+						requiredSwaps.append(candVariable.time)
 					print("\t\t\t" + str(cpt + 1) + "th comparison:\t\tvariable " + str(candVariable.id + 1) + " receives the parent variable " + str(candParVariable.id +1) + "...")
 				
 			iterationTimeAfter = time.clock()
@@ -76,7 +81,11 @@ def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,epsilonThreshold,
 					sum += (nbComp[i]/lenOfFold)*entropy(correctCompLog[i],nbComp[i] - correctCompLog[i])
 				convergenceAccuracyOnlineLog[n][cpt//(int(len(data[n])/1000))].append(sum)
 			cpt += 1
-			
+		if n == 0:
+			sum = 0
+			for i in range(len(requiredSwaps)):
+				sum += requiredSwaps[i]
+			requiredSwapOnline.append(sum/len(requiredSwaps))
 		timeAfter = time.clock()
 		computationTimeOnline[n].append(timeAfter - timeBefore)
 
@@ -238,6 +247,8 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 	accNoiseOffline = {}
 	accNoiseOfflineLog = {}
 	
+	requiredSwapOnline = []
+	
 	averageCycleSize2 = {}
 	for n in no:
 		averageCycleSize2[n] = 0
@@ -306,7 +317,7 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 					print("\tsubstep " + str(2 * j + 2) + "/" + str(2*smooth2) + ":\t\t\tONLINE learning phase in progress...")
 				else:
 					print("\tsubstep " + str(j + 1) + "/" + str(smooth2) + ":\t\t\tONLINE learning phase in progress...")
-				learnedCPNetOnline = learningCPNetOnline(dataTrain,dataTest,dataset.numberOfAttributes,dtBis,epsilonThreshold,numberOfParents2,dataset.lenOfFold,convergence,convergenceAccuracyOnline,convergenceAccuracyOnlineLog,no,computationTimeOnline,iterationTime,decisionMode,autorizedCycle)
+				learnedCPNetOnline = learningCPNetOnline(dataTrain,dataTest,dataset.numberOfAttributes,dtBis,epsilonThreshold,numberOfParents2,dataset.lenOfFold,convergence,convergenceAccuracyOnline,convergenceAccuracyOnlineLog,no,computationTimeOnline,iterationTime,decisionMode,autorizedCycle,requiredSwapOnline)
 			
 			print("\t\t\t\t\ttest phase in progress...")
 			for n in no:
@@ -558,6 +569,10 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 		print("We obtain the following last ONLINE learned CP-Net:")
 		# learnedCPNetOnline.displayCPNet()
 		learnedCPNetOnline[no[0]].displayCPNetInfo()
+		sum = 0
+		for i in range(len(requiredSwapOnline)):
+			sum += requiredSwapOnline[i]
+		print("An average of " + str(sum/totalSmooth) + " swaps are required to add a new parent variable")
 		print()
 	if offline:
 		print("We obtain the following last OFFLINE learned CP-Net:")
