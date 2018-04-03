@@ -11,8 +11,6 @@ numberOfParentsForLearnedCPNet = -1 # -1 = infinity
 numberOfRoundsForFileGeneration = 1
 numberOfRoundsForLearningProcedure = 10 # = percentage taken in the dataset for the cross validation
 
-numberOfRounds = 1
-
 decisionThresholdBis = 0.1 # delta for decisionMode = 1
 epsilonThreshold = 0.05 # threshold for epsilon
 
@@ -27,43 +25,12 @@ decisionMode = 2
 
 
 
-dataset = []
-for i in range(numberOfRounds):
-	dataset.append(Database(step = 1,smooth = 1,mode = modeForDatasetGeneration, filename = nameOfFile, nC = numberOfComparisons, noise = percentageOfNoise, nbV = numberOfVariables,lb = numberOfEdgesLambda,nbP = numberOfParentsForTargetCPNet,k = numberOfRoundsForLearningProcedure))
-
 fileTestNoiseHL = {}
 for i in percentageOfNoise:
 	fileTestNoiseHL[i] = open("test-results/test_acc_noise" + str(i) + "_Offline.dat","w")
 for numberOfParentsForLearnedCPNet in [0,1,2,4,6,8,11]:
-	accOffline = {}
-	accNoiseOffline = {}
-	accOfflineLog = {}
-	accNoiseOfflineLog = {}
-	sdOffline = {}
-	sdNoiseOffline = {}
-	sdOfflineLog = {}
-	sdNoiseOfflineLog = {}
-	for n in percentageOfNoise:
-		accOffline[n] = 0
-		accNoiseOffline[n] = 0
-		accOfflineLog[n] = 0
-		accNoiseOfflineLog[n] = 0
-		sdOffline[n] = 0
-		sdNoiseOffline[n] = 0
-		sdOfflineLog[n] = 0
-		sdNoiseOfflineLog[n] = 0
-	for i in range(numberOfRounds):
-		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,percentageOfNoise,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,online,offline,decisionMode,dataset[i],autorizedCycle)
-		for n in percentageOfNoise:
-			accOffline[n] += aOffline[n]
-			accNoiseOffline[n] += meanAccNoiseOffline[n]
-			accOfflineLog[n] += aOfflineLog[n]
-			accNoiseOfflineLog[n] += meanAccNoiseOfflineLog[n]
-			sdOffline[n] += sdAOffline[n]
-			sdNoiseOffline[n] += sdANoiseOffline[n]
-			sdOfflineLog[n] += sdAOfflineLog[n]
-			sdNoiseOfflineLog[n] += sdANoiseOfflineLog[n]
+	averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,percentageOfNoise,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,online,offline,decisionMode,None,autorizedCycle)
 	for i in percentageOfNoise:
-		fileTestNoiseHL[i].write(str(numberOfParentsForLearnedCPNet) + " " + str(accOffline[i]/numberOfRounds) + " " + str(sdOffline[i]/numberOfRounds) + " " + str(accOfflineLog[i]/numberOfRounds) + " " + str(sdOfflineLog[i]/numberOfRounds) + " " + str(accNoiseOffline[i]/numberOfRounds) + " " + str(sdNoiseOffline[i]/numberOfRounds) + " " + str(accNoiseOfflineLog[i]/numberOfRounds) + " " + str(sdNoiseOfflineLog[i]/numberOfRounds) + "\n")
+		fileTestNoiseHL[i].write(str(numberOfParentsForLearnedCPNet) + " " + str(aOffline[i]) + " " + str(sdAOffline[i]) + " " + str(aOfflineLog[i]) + " " + str(sdAOfflineLog[i]) + " " + str(meanAccNoiseOffline[i]) + " " + str(sdANoiseOffline[i]) + " " + str(meanAccNoiseOfflineLog[i]) + " " + str(sdANoiseOfflineLog[i]) + "\n")
 for i in percentageOfNoise:
 	fileTestNoiseHL[i].close()

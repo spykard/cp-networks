@@ -11,8 +11,6 @@ numberOfParentsForLearnedCPNet = -1 # -1 = infinity
 numberOfRoundsForFileGeneration = 1
 numberOfRoundsForLearningProcedure = 10 # = percentage taken in the dataset for the cross validation
 
-numberOfRounds = 1
-
 decisionThresholdBis = 0.1 # delta for decisionMode = 1
 epsilonThreshold = 0.05 # threshold for epsilon
 
@@ -27,37 +25,18 @@ decisionMode = 2
 
 
 
-dataset = []
-for i in range(numberOfRounds):
-	dataset.append(Database(step = 1,smooth = 1,mode = modeForDatasetGeneration, filename = nameOfFile, nC = numberOfComparisons, noise = percentageOfNoise, nbV = numberOfVariables,lb = numberOfEdgesLambda,nbP = numberOfParentsForTargetCPNet,k = numberOfRoundsForLearningProcedure))
-
-accOnline = {}
-accOnlineLog = {}
-sdOnline = {}
-sdOnlineLog = {}
-for n in percentageOfNoise:
-	accOnline[n] = 0
-	accOnlineLog[n] = 0
-	sdOnline[n] = 0
-	sdOnlineLog[n] = 0
-for i in range(numberOfRounds):
-	averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,online,offline,decisionMode,dataset[i],autorizedCycle)
-	print(displayParameters(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,lenOfFold,numberOfAttributes,online) + "\n" + displayResults(modeForDatasetGeneration,averageCycleSize2,percentageOfNoise,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,lenOfFold,online,offline,""))
-	for n in percentageOfNoise:
-		accOnline[n] += meanAccNoiseOnline[n]
-		accOnlineLog[n] += meanAccNoiseOnlineLog[n]
-		sdOnline[n] += sdANoiseOnline[n]
-		sdOnlineLog[n] += sdANoiseOnlineLog[n]
+averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,online,offline,decisionMode,None,autorizedCycle)
+print(displayParameters(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,lenOfFold,numberOfAttributes,online) + "\n" + displayResults(modeForDatasetGeneration,averageCycleSize2,percentageOfNoise,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,lenOfFold,online,offline,""))
 convfileTestOnline = open("test-results/test_noise_resist_Online.dat","w")
 tab1 = []
 tab2 = []
 tab3 = []
 tab4 = []
 for key in meanAccNoiseOnline.keys():
-	tab1.append([key,accOnline[key]/numberOfRounds])
-	tab2.append([key,sdOnline[key]/numberOfRounds])
-	tab3.append([key,accOnlineLog[key]/numberOfRounds])
-	tab4.append([key,sdOnlineLog[key]/numberOfRounds])
+	tab1.append([key,meanAccNoiseOnline[key]])
+	tab2.append([key,sdANoiseOnline[key]])
+	tab3.append([key,meanAccNoiseOnlineLog[key]])
+	tab4.append([key,sdANoiseOnlineLog[key]])
 tab1.sort()
 tab2.sort()
 tab3.sort()

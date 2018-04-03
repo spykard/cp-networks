@@ -107,11 +107,49 @@ for numberOfParentsForLearnedCPNet in [0,1,2,6,8,11]:
 for i in [0,10,20,40]:
 	fileTestNoiseOL[i].close()
 
-# test hyperparameter
+# test hyperparameter delta
 fileTest = {}
 for i in [0,10,20]:
-	fileTest[i] = open("test-results/test_hyperparameter_" + str(i) + ".dat","w")
+	fileTest[i] = open("test-results/test_hyperparameter_delta_" + str(i) + ".dat","w")
 for decisionThresholdBis in [0,0.02,0.04,0.06,0.08,0.1,0.12,0.14,0.16,0.18,0.2]:
+	accOnline = {}
+	accNoiseOnline = {}
+	accOnlineLog = {}
+	accNoiseOnlineLog = {}
+	sdOnline = {}
+	sdNoiseOnline = {}
+	sdOnlineLog = {}
+	sdNoiseOnlineLog = {}
+	for n in [0,10,20]:
+		accOnline[n] = 0
+		accNoiseOnline[n] = 0
+		accOnlineLog[n] = 0
+		accNoiseOnlineLog[n] = 0
+		sdOnline[n] = 0
+		sdNoiseOnline[n] = 0
+		sdOnlineLog[n] = 0
+		sdNoiseOnlineLog[n] = 0
+	for i in range(numberOfRounds):
+		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,1500000,[0,10,20],numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,True,False,decisionMode,dataset[i],autorizedCycle)
+		for n in [0,10,20]:
+			accOnline[n] += aOnline[n]
+			accNoiseOnline[n] += meanAccNoiseOnline[n]
+			accOnlineLog[n] += aOnlineLog[n]
+			accNoiseOnlineLog[n] += meanAccNoiseOnlineLog[n]
+			sdOnline[n] += sdAOnline[n]
+			sdNoiseOnline[n] += sdANoiseOnline[n]
+			sdOnlineLog[n] += sdAOnlineLog[n]
+			sdNoiseOnlineLog[n] += sdANoiseOnlineLog[n]
+	for i in [0,10,20]:
+		fileTest[i].write(str(decisionThresholdBis) + " " + str(accOnline[i]/numberOfRounds) + " " + str(sdOnline[i]/numberOfRounds) + " " + str(accOnlineLog[i]/numberOfRounds) + " " + str(sdOnlineLog[i]/numberOfRounds) + " " + str(accNoiseOnline[i]/numberOfRounds) + " " + str(sdNoiseOnline[i]/numberOfRounds) + " " + str(accNoiseOnlineLog[i]/numberOfRounds) + " " + str(sdNoiseOnlineLog[i]/numberOfRounds) + "\n")
+for i in [0,10,20]:
+	fileTest[i].close()
+	
+# test hyperparameter tau
+fileTest = {}
+for i in [0,10,20]:
+	fileTest[i] = open("test-results/test_hyperparameter_tau_" + str(i) + ".dat","w")
+for epsilonThreshold in [0,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.1]:
 	accOnline = {}
 	accNoiseOnline = {}
 	accOnlineLog = {}
