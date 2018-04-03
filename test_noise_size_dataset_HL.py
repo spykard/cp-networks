@@ -28,7 +28,7 @@ decisionMode = 2
 for numberOfComparisons in [5000,50000,200000]:
 	fileTestHL = {}
 	for i in percentageOfNoise:
-		fileTestHL[i] = open("test-results/test_time_size_database_" + str(i) + "_noise_" + str(numberOfComparisons) + "_Offline.dat","w")
+		fileTestHL[i] = open("test-results/test_size_database_" + str(i) + "_noise_" + str(numberOfComparisons) + "_Offline.dat","w")
 	for numberOfParentsForLearnedCPNet in [0,1,2,4,6,8,11]:
 		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,online,offline,decisionMode,None,autorizedCycle)
 		for i in percentageOfNoise:

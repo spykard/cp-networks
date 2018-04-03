@@ -8,8 +8,8 @@ numberOfVariables = 12 # -1 = automatically choose from the number of comparison
 numberOfEdgesLambda = -1 # -1 = infinity
 numberOfParentsForTargetCPNet = -1 # -1 = infinity
 numberOfParentsForLearnedCPNet = -1 # -1 = infinity
-numberOfRoundsForFileGeneration = 1
-numberOfRoundsForLearningProcedure = 10 # = percentage taken in the dataset for the cross validation
+numberOfRoundsForFileGeneration = 10
+numberOfRoundsForLearningProcedure = 1 # = percentage taken in the dataset for the cross validation
 
 decisionThresholdBis = 0.1 # delta for decisionMode = 1
 epsilonThreshold = 0.05 # threshold for epsilon
@@ -28,7 +28,7 @@ decisionMode = 2
 for numberOfComparisons in [5000,50000,200000]:
 	fileTestHL = {}
 	for i in percentageOfNoise:
-		fileTestHL[i] = open("test-results/test_size_database_" + str(i) + "_noise_" + str(numberOfComparisons) + "_Offline.dat","w")
+		fileTestHL[i] = open("test-results/test_overfitting_" + str(i) + "_noise_" + str(numberOfComparisons) + "_Offline.dat","w")
 	for numberOfParentsForLearnedCPNet in [0,1,2,6,8,11]:
 		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,False,True,decisionMode,None,autorizedCycle)
 		for i in percentageOfNoise:
@@ -39,7 +39,7 @@ for numberOfComparisons in [5000,50000,200000]:
 for numberOfComparisons in [500000,150000,1500000]:
 	fileTestOL = {}
 	for i in percentageOfNoise:
-		fileTestOL[i] = open("test-results/test_size_database_" + str(i) + "_noise_" + str(numberOfComparisons) + "_Online.dat","w")
+		fileTestOL[i] = open("test-results/test_overfitting_" + str(i) + "_noise_" + str(numberOfComparisons) + "_Online.dat","w")
 	for numberOfParentsForLearnedCPNet in [0,1,2,6,8,11]:
 		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,True,False,decisionMode,None,autorizedCycle)
 		for i in percentageOfNoise:
