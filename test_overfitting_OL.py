@@ -8,8 +8,8 @@ numberOfVariables = 12 # -1 = automatically choose from the number of comparison
 numberOfEdgesLambda = -1 # -1 = infinity
 numberOfParentsForTargetCPNet = -1 # -1 = infinity
 numberOfParentsForLearnedCPNet = -1 # -1 = infinity
-numberOfRoundsForFileGeneration = 1
-numberOfRoundsForLearningProcedure = 10 # = percentage taken in the dataset for the cross validation
+numberOfRoundsForFileGeneration = 10
+numberOfRoundsForLearningProcedure = 1 # = percentage taken in the dataset for the cross validation
 
 decisionThresholdBis = 0.1 # delta for decisionMode = 1
 epsilonThreshold = 0.05 # threshold for epsilon
