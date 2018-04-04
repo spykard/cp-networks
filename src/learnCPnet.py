@@ -81,7 +81,7 @@ def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,epsilonThreshold,
 					sum += (nbComp[i]/lenOfFold)*entropy(correctCompLog[i],nbComp[i] - correctCompLog[i])
 				convergenceAccuracyOnlineLog[n][cpt//(int(len(data[n])/1000))].append(sum)
 			cpt += 1
-		if n == 0:
+		if n == 0 and len(requiredSwaps) != 0:
 			sum = 0
 			for i in range(len(requiredSwaps)):
 				sum += requiredSwaps[i]
@@ -572,7 +572,8 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 		sum = 0
 		for i in range(len(requiredSwapOnline)):
 			sum += requiredSwapOnline[i]
-		print("An average of " + str(sum/totalSmooth) + " swaps are required to add a new parent variable")
+		if sum != 0:
+			print("An average of " + str(sum/totalSmooth) + " swaps are required to add a new parent variable")
 		print()
 	if offline:
 		print("We obtain the following last OFFLINE learned CP-Net:")
