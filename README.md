@@ -1,6 +1,6 @@
 # cpNets
 This is a program, in python 3.5, which is able to learn acyclic conditional preference networks
-from noisy preferences
+from noisy preferences.
 
 It provide two algorithms : a batch algorithm and an online algorithm based on the McDiarmid bound in order to take
 the best decision at the best moment.
