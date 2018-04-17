@@ -76,12 +76,14 @@ class Variable:
 							sumNonPar[nonPar] += max(pref.statsForRuleOne[nonPar] + pref.statsForInversedRuleZero[nonPar],pref.statsForRuleZero[nonPar] + pref.statsForInversedRuleOne[nonPar])
 		if decisionMode == 2:
 			entropyVar = 0
-			for pref in self.preferences.values():
-				entropyVar += ((pref.counterForRule+pref.counterForInversedRule)/self.time)*entropy(pref.counterForRule,pref.counterForInversedRule)
+			if self.time != 0:
+				for pref in self.preferences.values():
+					entropyVar += ((pref.counterForRule+pref.counterForInversedRule)/self.time)*entropy(pref.counterForRule,pref.counterForInversedRule)
 			for nonPar in self.candidateNonParentVariables:
 				entropyVarPar = 0
-				for pref in self.preferences.values():
-					entropyVarPar += ((pref.statsForRuleOne[nonPar] + pref.statsForInversedRuleOne[nonPar])/self.time)*entropy(pref.statsForRuleOne[nonPar],pref.statsForInversedRuleOne[nonPar]) + ((pref.statsForRuleZero[nonPar] + pref.statsForInversedRuleZero[nonPar])/self.time)*entropy(pref.statsForRuleZero[nonPar],pref.statsForInversedRuleZero[nonPar])
+				if self.time != 0:
+					for pref in self.preferences.values():
+						entropyVarPar += ((pref.statsForRuleOne[nonPar] + pref.statsForInversedRuleOne[nonPar])/self.time)*entropy(pref.statsForRuleOne[nonPar],pref.statsForInversedRuleOne[nonPar]) + ((pref.statsForRuleZero[nonPar] + pref.statsForInversedRuleZero[nonPar])/self.time)*entropy(pref.statsForRuleZero[nonPar],pref.statsForInversedRuleZero[nonPar])
 				self.currentInformationGainNonParent[nonPar] = entropyVar - entropyVarPar
 
 	def updateCPTable(self,rule,outcome,canUse,decisionMode):
