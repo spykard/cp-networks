@@ -1,7 +1,7 @@
 from src.learnCPnet import *
 
 modeForDatasetGeneration = 1 # 1 = read a file, 2 = generate a synthetic database
-nameOfFile = ["databases/sushi_30Users_10000Comparisons.dat","databases/sushi_30Users_20000Comparisons.dat","databases/hotels_parsing_binarisation_10000.dat","databases/hotels_parsing_binarisation_20000.dat"]
+nameOfFile = ["databases/sushi_30Users_10000Comparisons.dat","databases/sushi_30Users_20000Comparisons.dat","databases/hotels_parsing_binarisation_10000.dat","databases/hotels_parsing_binarisation_20000.dat","databases/movieLensDataset.dat"]
 numberOfComparisons = -1 # -1 = all of the comparisons in file
 percentageOfNoise = [0] # between 0 and 50
 numberOfVariables = 12 # -1 = automatically choose from the number of comparisons
@@ -46,5 +46,11 @@ fileTestHL.close()
 fileTestHL = open("test-results/test_acc_hotels_20000_Offline.dat","w")
 for numberOfParentsForLearnedCPNet in [0,1,2,3,4,5,6]:
 	averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile[3],numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,online,offline,decisionMode,None,autorizedCycle)
+	fileTestHL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOffline[0]) + " " + str(sdAOffline[0]) + " " + str(aOfflineLog[0]) + " " + str(sdAOfflineLog[0]) + "\n")
+fileTestHL.close()
+
+fileTestHL = open("test-results/test_acc_movieLens_Offline.dat","w")
+for numberOfParentsForLearnedCPNet in [0,1,4,7,10,13,16,19]:
+	averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile[4],numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,online,offline,decisionMode,None,autorizedCycle)
 	fileTestHL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOffline[0]) + " " + str(sdAOffline[0]) + " " + str(aOfflineLog[0]) + " " + str(sdAOfflineLog[0]) + "\n")
 fileTestHL.close()
