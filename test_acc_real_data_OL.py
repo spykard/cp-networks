@@ -1,7 +1,7 @@
 from src.learnCPnet import *
 
 modeForDatasetGeneration = 1 # 1 = read a file, 2 = generate a synthetic database
-nameOfFile = ["databases/sushi_30Users_10000Comparisons.dat","databases/sushi_30Users_20000Comparisons.dat","databases/hotels_parsing_binarisation_10000.dat","databases/hotels_parsing_binarisation_20000.dat","databases/movieLensDataset.dat"]
+nameOfFile = ["databases/sushi_30Users_10000Comparisons.dat","databases/sushi_30Users_20000Comparisons.dat","databases/hotels_parsing_binarisation_10000.dat","databases/hotels_parsing_binarisation_20000.dat","databases/movieLensDataset_200000.dat"]
 numberOfComparisons = -1 # -1 = all of the comparisons in file
 percentageOfNoise = [0] # between 0 and 50
 numberOfVariables = 12 # -1 = automatically choose from the number of comparisons
@@ -12,7 +12,7 @@ numberOfRoundsForFileGeneration = 1
 numberOfRoundsForLearningProcedure = 10 # = percentage taken in the dataset for the cross validation
 
 decisionThresholdBis = 0.1 # delta for decisionMode = 1
-epsilonThreshold = 0.05 # threshold for epsilon
+epsilonThreshold = 0.3 # threshold for epsilon
 
 convergence = False
 
