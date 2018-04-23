@@ -50,7 +50,7 @@ for numberOfParentsForLearnedCPNet in [0,1,2,3,4,5,6]:
 fileTestOL.close()
 
 fileTestOL = open("test-results/test_acc_movieLens_Online.dat","w")
-for numberOfParentsForLearnedCPNet in [0,1,4,7,10,13,16,19]:
+for numberOfParentsForLearnedCPNet in [0,1,4,7,10,13,16,18]:
 	averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile[4],numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,online,offline,decisionMode,None,autorizedCycle)
 	fileTestOL.write(str(numberOfParentsForLearnedCPNet) + " " + str(aOnline[0]) + " " + str(sdAOnline[0]) + " " + str(aOnlineLog[0]) + " " + str(sdAOnlineLog[0]) + "\n")
 fileTestOL.close()
