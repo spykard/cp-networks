@@ -42,7 +42,7 @@ for numberOfComparisons in [5000,10000,50000,200000]:
 	fileTestOL = open("test-results/test_time_nbVar_" + str(numberOfComparisons) + "_Online.dat","w")
 	for numberOfVariables in [4,8,12,16]:
 		averageCycleSize2,aOnline,aOnlineLog,sdAOnline,sdAOnlineLog,aOffline,aOfflineLog,sdAOffline,sdAOfflineLog,tOnline,sdTOnline,meanIT,sdIT,tOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,lenOfFold,numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog = generalProcedure(modeForDatasetGeneration,nameOfFile,numberOfComparisons,percentageOfNoise,numberOfVariables,numberOfEdgesLambda,numberOfParentsForTargetCPNet,numberOfParentsForLearnedCPNet,numberOfRoundsForFileGeneration,numberOfRoundsForLearningProcedure,decisionThresholdBis,epsilonThreshold,convergence,online,offline,decisionMode,None,autorizedCycle)
-		fileTestHL.write(str(numberOfParentsForLearnedCPNet) + " " + str(tOffline[0]) + " " + str(sdTOffline[0]) + " \n")
-		fileTestOL.write(str(numberOfParentsForLearnedCPNet) + " " + str(tOnline[0]) + " " + str(sdTOnline[0]) + " \n")
+		fileTestHL.write(str(numberOfVariables) + " " + str(tOffline[0]) + " " + str(sdTOffline[0]) + " \n")
+		fileTestOL.write(str(numberOfVariables) + " " + str(tOnline[0]) + " " + str(sdTOnline[0]) + " \n")
 	fileTestHL.close()
 	fileTestOL.close()
