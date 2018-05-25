@@ -5,7 +5,7 @@ from src.learnCPnet import *
 print(argv[1],argv[2],argv[3],argv[4],argv[5],argv[6],argv[7])
 
 modeForDatasetGeneration = 1 # 1 = read a file, 2 = generate a synthetic database
-nameOfFile = "databases/movieLensDataset_user4222.dat"
+nameOfFile = "databases/test_database1300.dat"
 numberOfComparisons = int(argv[7]) # -1 = all of the comparisons in file
 percentageOfNoise = [0] # between 0 and 50
 numberOfVariables = -1 # -1 = automatically choose from the number of comparisons
