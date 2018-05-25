@@ -118,7 +118,8 @@ class CPNet:
 					# if cpt % 10000 == 0:
 						# print(maxVar[2] - maxVar2[2],epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules))
 					# if maxVar[2] - maxVar2[2] > 2*epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) or epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) < 0.07:
-					if maxVar[2] <= maxVar2[2] - 2*epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) or epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) < epsilonThreshold:
+					if maxVar[2] - maxVar2[2] > 2*epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) or epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) < epsilonThreshold:
+					# if maxVar[2] <= maxVar2[2] - 2*epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) or epsilonMcDiarmid2(decTh,var.time,var2.time,self.numberOfRules) < epsilonThreshold:
 						return True,var,varPar
 					# if cpt % 10000 == 0:
 						# print(maxVar[2],epsilonMcDiarmid3(decTh,var.time,self.numberOfRules))
