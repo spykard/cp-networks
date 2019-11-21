@@ -3,6 +3,9 @@ from random import *
 from operator import itemgetter
 from math import *
 
+import networkx
+import matplotlib.pyplot as plt
+
 # a CP-Net constists of
 # a name, usually a letter
 # a list of variables
@@ -251,6 +254,45 @@ class CPNet:
 		if noPreferences:
 			print("Without any preference yet.")
 		
+	def displayGraph(self):
+		# NEW: Converts the CP-net into a graph structure at the very final step and prints it
+		print("\nGoing to print the CP-Net in GRAPH form")
+		print("This CP-Net",self.name,"has", len(self.variables), "variable(s).")
+		G = networkx.DiGraph()
+		noPreferences = True
+		for var in self.variables:
+			G.add_node(var.id+1)
+			if var.parents == [] and var.preferences:
+				noPreferences = False
+				print("Var." + str(var.id+1), ":", var.preferences[-1].trueRule, "is preferred than", int(not(var.preferences[-1].trueRule)))
+			if var.parents != []:
+				for key in var.preferences.keys():
+					parentsVect = fromIntToBin(key,len(var.parents))
+					noPreferences = False
+					string = "with"
+					for i,elt in enumerate(parentsVect):
+						if i < len(var.parents):
+							G.add_edge(var.parents[i].id+1, var.id+1)
+							string += " Var." + str(var.parents[i].id+1) + " = " + str(elt)
+					print("Var." + str(var.id+1), string, "as parents :", int(var.preferences[key].trueRule), "is preferred than", int(not(var.preferences[key].trueRule)))
+		if noPreferences:
+			print("Without any preference yet.")
+
+
+		# G = networkx.DiGraph()
+		# G.add_edges_from([(1, 2), (1, 3)])
+		# G.add_node(1)
+		# G.add_edge(1, 2)
+		# G.add_node("spam")        # adds node "spam"
+		# G.add_nodes_from("spam")  # adds 4 nodes: 's', 'p', 'a', 'm'
+		# G.add_edge(3, 'm')
+		# print(G.degree(1))
+		# lollipop = networkx.lollipop_graph(10, 20)
+		#networkx.draw_planar(G, with_labels=True)
+		networkx.draw_shell(G, with_labels=True)
+		#networkx.draw_circular(lollipop, with_labels=True, font_weight='bold')
+		plt.show()
+
 	def fillCPGraph(self):
 		for var in self.variables:
 			self.CPGraph[var.id] = []
