@@ -278,19 +278,7 @@ class CPNet:
 		if noPreferences:
 			print("Without any preference yet.")
 
-
-		# G = networkx.DiGraph()
-		# G.add_edges_from([(1, 2), (1, 3)])
-		# G.add_node(1)
-		# G.add_edge(1, 2)
-		# G.add_node("spam")        # adds node "spam"
-		# G.add_nodes_from("spam")  # adds 4 nodes: 's', 'p', 'a', 'm'
-		# G.add_edge(3, 'm')
-		# print(G.degree(1))
-		# lollipop = networkx.lollipop_graph(10, 20)
-		#networkx.draw_planar(G, with_labels=True)
 		networkx.draw_shell(G, with_labels=True)
-		#networkx.draw_circular(lollipop, with_labels=True, font_weight='bold')
 		plt.show()
 
 	def fillCPGraph(self):
