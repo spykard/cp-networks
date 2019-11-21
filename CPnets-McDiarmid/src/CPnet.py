@@ -317,3 +317,6 @@ class CPNet:
 		for par in flipVar.parents:
 			tab.append(outcome1[par.id])
 		return [self.variables[flipVariable(outcome1,outcome2)].id,fromBinToInt(tab),outcome1[flipVar.id]]
+
+	def transparentEntailment(self):
+		print()
