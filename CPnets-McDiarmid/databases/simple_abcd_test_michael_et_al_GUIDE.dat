@@ -1,75 +1,46 @@
-#Number_of_attributes 4
-#Number_of_comparisons 60
+#Number_of_attributes 3
+#Number_of_comparisons Unknown
 #Number_of_users Unknown
-//REGARDING A VARIABLE
-1 0 0 0,0 0 0 0
-1 0 0 0,0 0 1 0
-1 0 0 0,0 1 1 0
-1 0 0 0,0 1 0 0
-1 0 1 0,0 0 0 0
-1 0 1 0,0 0 1 0
-1 0 1 0,0 1 1 0
-1 0 1 0,0 1 0 0
-1 1 0 0,0 0 0 0
-1 1 0 0,0 0 1 0
-1 1 0 0,0 1 1 0
-1 1 0 0,0 1 0 0
-1 1 1 0,0 0 0 0
-1 1 1 0,0 0 1 0
-1 1 1 0,0 1 1 0
-1 1 1 0,0 1 0 0
-//REGARDING B.first VARIABLE
+// A to B parent, table included
+0 1 0,0 0 0
+1 0 0,1 1 0
+// B table
+0 0 0,1 0 0
+0 1 0,1 1 0
+// A to C parent, part of table included
+0 0 1,0 0 0
+1 0 0,1 0 1
+// B to C parent, part of table included
+0 0 1,0 0 0
+0 1 0,0 1 1
+// C table, it works perfectly even though we just used the opposite of an above rule and we can thus delete the previous rule
+0 1 1,0 1 0
+1 1 1,1 1 0
+
+
+#Number_of_attributes 4
+#Number_of_comparisons Unknown
+#Number_of_users Unknown
+// A to B parent, table included
 0 1 0 0,0 0 0 0
-0 1 0 0,0 0 0 1
-0 1 0 0,0 0 1 0
-0 1 0 0,0 0 1 1
-0 1 0 1,0 0 0 0
-0 1 0 1,0 0 0 1
-0 1 0 1,0 0 1 0
-0 1 0 1,0 0 1 1
-0 1 1 0,0 0 0 0
-0 1 1 0,0 0 0 1
-0 1 1 0,0 0 1 0
-0 1 1 0,0 0 1 1
-0 1 1 1,0 0 0 0
-0 1 1 1,0 0 0 1
-0 1 1 1,0 0 1 0
-0 1 1 1,0 0 1 1
-//REGARDING B.second VARIABLE
-1 1 0 0,1 0 0 0
-1 1 0 0,1 0 0 1
-1 1 0 0,1 0 1 0
-1 1 0 0,1 0 1 1
-1 1 0 1,1 0 0 0
-1 1 0 1,1 0 0 1
-1 1 0 1,1 0 1 0
-1 1 0 1,1 0 1 1
-1 1 1 0,1 0 0 0
-1 1 1 0,1 0 0 1
-1 1 1 0,1 0 1 0
-1 1 1 0,1 0 1 1
-1 1 1 1,1 0 0 0
-1 1 1 1,1 0 0 1
-1 1 1 1,1 0 1 0
-1 1 1 1,1 0 1 1
-//REGARDING C.first VARIABLE
+1 0 0 0,1 1 0 0
+// B table
+0 0 0 0,1 0 0 0
+0 1 0 0,1 1 0 0
+// A to C parent, part of table included
 0 0 1 0,0 0 0 0
-0 0 1 1,0 0 0 1
-//REGARDING C.second VARIABLE
-0 1 1 0,0 1 0 0
-0 1 1 1,0 1 0 1
-//REGARDING C.third VARIABLE
 1 0 0 0,1 0 1 0
-1 0 0 1,1 0 1 1
-//REGARDING C.fourth VARIABLE
+// B to C parent, part of table included
+0 0 1 0,0 0 0 0
+//0 1 0 0,0 1 1 0
+// C table, it works perfectly even though we just used the opposite of an above rule and we can thus delete the previous rule
+0 1 1 0,0 1 0 0
 1 1 1 0,1 1 0 0
-1 1 1 1,1 1 0 1
-//REGARDING D.first VARIABLE
+//B to D parent, part of table included, flipped variable D so that we don't need to add opposite rules in "D table"
 0 0 0 0,0 0 0 1
-//REGARDING D.second VARIABLE
-0 0 1 1,0 0 1 0
-//REGARDING D.third VARIABLE
 0 1 0 1,0 1 0 0
-//REGARDING D.fourth VARIABLE
+//C to D parent, part of table included, flipped variable D so that we don't need to add opposite rules in "D table"
+0 0 0 1,0 0 0 0
+0 0 1 1,0 0 1 0
+//D table, it works perfectly even though we just used the opposite of an above rule and we can thus delete the previous rule
 0 1 1 0,0 1 1 1
-//NEW LINE AT THE END IS REQUIRED
