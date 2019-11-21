@@ -1,0 +1,75 @@
+#Number_of_attributes 4
+#Number_of_comparisons 60
+#Number_of_users Unknown
+//REGARDING A VARIABLE
+1 0 0 0,0 0 0 0
+1 0 0 0,0 0 1 0
+1 0 0 0,0 1 1 0
+1 0 0 0,0 1 0 0
+1 0 1 0,0 0 0 0
+1 0 1 0,0 0 1 0
+1 0 1 0,0 1 1 0
+1 0 1 0,0 1 0 0
+1 1 0 0,0 0 0 0
+1 1 0 0,0 0 1 0
+1 1 0 0,0 1 1 0
+1 1 0 0,0 1 0 0
+1 1 1 0,0 0 0 0
+1 1 1 0,0 0 1 0
+1 1 1 0,0 1 1 0
+1 1 1 0,0 1 0 0
+//REGARDING B.first VARIABLE
+0 1 0 0,0 0 0 0
+0 1 0 0,0 0 0 1
+0 1 0 0,0 0 1 0
+0 1 0 0,0 0 1 1
+0 1 0 1,0 0 0 0
+0 1 0 1,0 0 0 1
+0 1 0 1,0 0 1 0
+0 1 0 1,0 0 1 1
+0 1 1 0,0 0 0 0
+0 1 1 0,0 0 0 1
+0 1 1 0,0 0 1 0
+0 1 1 0,0 0 1 1
+0 1 1 1,0 0 0 0
+0 1 1 1,0 0 0 1
+0 1 1 1,0 0 1 0
+0 1 1 1,0 0 1 1
+//REGARDING B.second VARIABLE
+1 1 0 0,1 0 0 0
+1 1 0 0,1 0 0 1
+1 1 0 0,1 0 1 0
+1 1 0 0,1 0 1 1
+1 1 0 1,1 0 0 0
+1 1 0 1,1 0 0 1
+1 1 0 1,1 0 1 0
+1 1 0 1,1 0 1 1
+1 1 1 0,1 0 0 0
+1 1 1 0,1 0 0 1
+1 1 1 0,1 0 1 0
+1 1 1 0,1 0 1 1
+1 1 1 1,1 0 0 0
+1 1 1 1,1 0 0 1
+1 1 1 1,1 0 1 0
+1 1 1 1,1 0 1 1
+//REGARDING C.first VARIABLE
+0 0 1 0,0 0 0 0
+0 0 1 1,0 0 0 1
+//REGARDING C.second VARIABLE
+0 1 1 0,0 1 0 0
+0 1 1 1,0 1 0 1
+//REGARDING C.third VARIABLE
+1 0 0 0,1 0 1 0
+1 0 0 1,1 0 1 1
+//REGARDING C.fourth VARIABLE
+1 1 1 0,1 1 0 0
+1 1 1 1,1 1 0 1
+//REGARDING D.first VARIABLE
+0 0 0 0,0 0 0 1
+//REGARDING D.second VARIABLE
+0 0 1 1,0 0 1 0
+//REGARDING D.third VARIABLE
+0 1 0 1,0 1 0 0
+//REGARDING D.fourth VARIABLE
+0 1 1 0,0 1 1 1
+//NEW LINE AT THE END IS REQUIRED
