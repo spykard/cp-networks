@@ -133,7 +133,6 @@ def learningCPNetOffline(data,dataTestForConv,numberOfVar,nbOfParents,lenOfFold,
 				rule = N[n].returnRule(swapVariable,comparison[0],comparison[1])[1:]
 				swapVariable.updateCPTable(rule,comparison[0],swapVariable in N[n].candidateVariables,decisionMode)
 				N[n].numberOfRules += 1
-			
 			# compute accuracy in case of convergence
 			if convergence:
 				correctComp = 0
@@ -579,6 +578,9 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 	if offline:
 		print("We obtain the following last OFFLINE learned CP-Net:")
 		# learnedCPNetOffline.displayCPNet()
+		# print(len(learnedCPNetOffline[no[0]].variables))
+		# for var in learnedCPNetOffline[no[0]].variables:		
+		# 	print(var.preferences[-1].trueRule)
 		learnedCPNetOffline[no[0]].displayCPNetInfo()
 		learnedCPNetOffline[no[0]].displayGraph()
 		print()
