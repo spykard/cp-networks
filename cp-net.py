@@ -1,7 +1,7 @@
 import networkx
 import matplotlib.pyplot as plt
 
-# There are only 3 existing repos
+# There are only 4 existing repos
 # https://github.com/potassco/asprin (Python)
 # https://github.com/FabienLab/CPnets-McDiarmid (Python)
 # https://github.com/nmattei/GenCPnet (C++)
