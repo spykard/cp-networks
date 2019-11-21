@@ -569,6 +569,7 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 		print("We obtain the following last ONLINE learned CP-Net:")
 		# learnedCPNetOnline.displayCPNet()
 		learnedCPNetOnline[no[0]].displayCPNetInfo()
+		learnedCPNetOffline[no[0]].displayGraph()
 		sum = 0
 		for i in range(len(requiredSwapOnline)):
 			sum += requiredSwapOnline[i]
@@ -579,6 +580,7 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 		print("We obtain the following last OFFLINE learned CP-Net:")
 		# learnedCPNetOffline.displayCPNet()
 		learnedCPNetOffline[no[0]].displayCPNetInfo()
+		learnedCPNetOffline[no[0]].displayGraph()
 		print()
 	
 	return averageCycleSize2,meanAccOnline,meanAccOnlineLog,sdAOnline,sdAOnlineLog,meanAccOffline,meanAccOfflineLog,sdAOffline,sdAOfflineLog,meanTOnline,sdTOnline,meanIT,sdIT,meanTOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,dataset.lenOfFold,dataset.numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog
