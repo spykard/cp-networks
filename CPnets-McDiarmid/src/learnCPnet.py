@@ -639,11 +639,17 @@ def transparentEntailment(CPnet, dataset):
 		while X != [] and o_s != o_j:
 			Xt = X.pop(0)
 			swapVariable = CPnet.getVariable(Xt-1)  # Originally this was CPnet.getVariable(comparison[2])
+
+			print("\nCurrent Rule is " + str(swapVariable.id), end = " ")
+
 			rule = CPnet.returnRule(swapVariable,o_s,o_j)
+
+			print(rule)
 			#rule = CPnet.returnRule(swapVariable,comparison[0],comparison[1])[1:]
-			#print(rule)
+			#rule[1] = swapVariable.id
 			#swapVariable.updateCPTable(rule,comparison[0],swapVariable in N[n].candidateVariables,decisionMode)
 			try:
+				print(CPnet.getVariable(rule[0]).preferences)
 				CPnet.fitCPNet(rule)  # This seems to check the CPTable
 				o_s[swapVariable.id] = o_j[swapVariable.id]
 				print(o_s)
@@ -655,4 +661,5 @@ def transparentEntailment(CPnet, dataset):
 			print(True)
 		else:
 			print(False)
+		quit()
 	quit()
