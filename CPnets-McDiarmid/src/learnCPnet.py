@@ -624,13 +624,16 @@ def displayResults(modeForDatasetGeneration,averageCycleSize2,percentageOfNoise,
 	return s
 
 def transparentEntailment(CPnet, dataset):
-	# NEW
+	# NEW: The implementation of CPnet training was done with a weird "flipping" where it flips variables left-to-right (whichever it meets first),
+	# here we perform "flipping" the correct way, but maybe the aforementioned training can affect the results
+	# rule = [variable_to_be_flipped, parent_related, current_value_to_be_changed]
 	print("\nExecuting transparent entailment module")
 	V_normal = list(topological_sort(CPnet.networkxGraph))  # Doesn't use reverse functions because they create a shallow copy not a deep copy
 	V_reverse = list(reversed(list(topological_sort(CPnet.networkxGraph))))
 
 	#for comparison in dataset.dataFold[0][0]:
-	for comparison in [[[0,1,0,0], [1,0,1,1]], [[0,1,1,0], [1,0,0,0]]]:
+	#for comparison in [[[0,1,0,0], [1,0,1,1]]]:  # is not Transparent
+	for comparison in [[[0,1,1,0], [1,0,0,0]]]:  # is Transparent
 		print("New Comparison")
 		X = V_reverse+V_normal
 		o_i = comparison[0]
@@ -640,17 +643,24 @@ def transparentEntailment(CPnet, dataset):
 			Xt = X.pop(0)
 			swapVariable = CPnet.getVariable(Xt-1)  # Originally this was CPnet.getVariable(comparison[2])
 
-			print("\nCurrent Rule is " + str(swapVariable.id), end = " ")
+			print("\nCurrent Var is " + str(swapVariable.id) + " with " + str(len(swapVariable.parents)) + " parents", end = "\n")
 
-			rule = CPnet.returnRule(swapVariable,o_s,o_j)
+			rule = CPnet.returnRuleNew(swapVariable,o_s,o_j)
+			print("Rule is:",rule)
 
-			print(rule)
 			#rule = CPnet.returnRule(swapVariable,comparison[0],comparison[1])[1:]
-			#rule[1] = swapVariable.id
 			#swapVariable.updateCPTable(rule,comparison[0],swapVariable in N[n].candidateVariables,decisionMode)
 			try:
-				print(CPnet.getVariable(rule[0]).preferences)
-				CPnet.fitCPNet(rule)  # This seems to check the CPTable
+				print("CPT_Table:", CPnet.getVariable(rule[0]).preferences)
+				#CPnet.fitCPNet(rule)  # This seems to check the CPTable
+				#for i in range(4):
+				#	print(CPnet.getVariable(rule[0]).preferences[i].trueRule)
+				#quit()
+				if CPnet.getVariable(rule[0]).preferences[rule[1]].trueRule == rule[2]:  # Inspired by fitCPnet function
+					pass
+				else:
+					raise(KeyError)
+
 				o_s[swapVariable.id] = o_j[swapVariable.id]
 				print(o_s)
 			except KeyError:
@@ -661,5 +671,4 @@ def transparentEntailment(CPnet, dataset):
 			print(True)
 		else:
 			print(False)
-		quit()
 	quit()

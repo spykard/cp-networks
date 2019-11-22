@@ -314,8 +314,21 @@ class CPNet:
 	# rule = [varId,parentsValue,valVar]
 	def returnRule(self,flipVar,outcome1,outcome2):
 		tab = []
+		print("\n", flipVar.id)
+		print(flipVar.parents)
+
 		if flipVar.parents == []:
 			return [self.variables[flipVariable(outcome1,outcome2)].id,-1,outcome1[flipVar.id]]
 		for par in flipVar.parents:
 			tab.append(outcome1[par.id])
 		return [self.variables[flipVariable(outcome1,outcome2)].id,fromBinToInt(tab),outcome1[flipVar.id]]
+
+	def returnRuleNew(self,flipVar,outcome1,outcome2):
+		# NEW
+		tab = []
+
+		if flipVar.parents == []:
+			return [self.variables[flipVariable(outcome1,outcome2)].id,-1,outcome1[flipVar.id]]
+		for par in flipVar.parents:
+			tab.append(outcome1[par.id])
+		return [flipVar.id,fromBinToInt(tab),outcome1[flipVar.id]]
