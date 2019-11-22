@@ -314,8 +314,6 @@ class CPNet:
 	# rule = [varId,parentsValue,valVar]
 	def returnRule(self,flipVar,outcome1,outcome2):
 		tab = []
-		print("\n", flipVar.id)
-		print(flipVar.parents)
 
 		if flipVar.parents == []:
 			return [self.variables[flipVariable(outcome1,outcome2)].id,-1,outcome1[flipVar.id]]
@@ -328,7 +326,17 @@ class CPNet:
 		tab = []
 
 		if flipVar.parents == []:
-			return [self.variables[flipVariable(outcome1,outcome2)].id,-1,outcome1[flipVar.id]]
+			return [flipVar.id,-1,outcome1[flipVar.id]]
 		for par in flipVar.parents:
 			tab.append(outcome1[par.id])
 		return [flipVar.id,fromBinToInt(tab),outcome1[flipVar.id]]
+
+	def returnRuleNewNew(self,flipVar,outcome1,outcome2):
+		# NEW: Previous new was working, but the BinToInt seems to be intuitively wrong. It only outputs a single parents with a very weird conversion.
+		tab = []
+
+		if flipVar.parents == []:
+			return [flipVar.id,[-1],outcome1[flipVar.id]]
+		for par in flipVar.parents:
+			tab.append(par.id)
+		return [flipVar.id,tab,outcome1[flipVar.id]]

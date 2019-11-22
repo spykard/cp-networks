@@ -585,7 +585,7 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 		# 	print(var.preferences[-1].trueRule)
 		learnedCPNetOffline[no[0]].displayCPNetInfo()
 		learnedCPNetOffline[no[0]].create_displayGraph(display=False)
-		transparentEntailment(learnedCPNetOffline[no[0]],dataset)
+		transparentEntailment(learnedCPNetOffline[no[0]],dataset,debug=False)
 		print()
 	
 	return averageCycleSize2,meanAccOnline,meanAccOnlineLog,sdAOnline,sdAOnlineLog,meanAccOffline,meanAccOfflineLog,sdAOffline,sdAOfflineLog,meanTOnline,sdTOnline,meanIT,sdIT,meanTOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,dataset.lenOfFold,dataset.numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog
@@ -623,7 +623,7 @@ def displayResults(modeForDatasetGeneration,averageCycleSize2,percentageOfNoise,
 			s += "We obtain for the OFFLINE version:\n" + str(round(aOffline[0],2)) + "% of agreement *" + str(int(aOffline[0]/100*lenOfFold)) + "/" + str(lenOfFold) + " comparisons* (sd = " + str(round(sdAOffline[0],2)) + "%),:\n" + str(round(aOfflineLog[0],2)) + " of log loss (sd = " + str(round(sdAOfflineLog[0],2)) + "%),\ncomputation takes " + str(round(tOffline[0],4)) + " seconds (sd = " + str(round(sdTOffline[0],4)) + " seconds).\n"
 	return s
 
-def transparentEntailment(CPnet, dataset):
+def transparentEntailment(CPnet,dataset,debug=False):
 	# NEW: The implementation of CPnet training was done with a weird "flipping" where it flips variables left-to-right (whichever it meets first),
 	# here we perform "flipping" the correct way, but maybe the aforementioned training can affect the results
 	# rule = [variable_to_be_flipped, parent_related, current_value_to_be_changed]
@@ -631,40 +631,48 @@ def transparentEntailment(CPnet, dataset):
 	V_normal = list(topological_sort(CPnet.networkxGraph))  # Doesn't use reverse functions because they create a shallow copy not a deep copy
 	V_reverse = list(reversed(list(topological_sort(CPnet.networkxGraph))))
 
-	#for comparison in dataset.dataFold[0][0]:
 	#for comparison in [[[0,1,0,0], [1,0,1,1]]]:  # is not Transparent
-	for comparison in [[[0,1,1,0], [1,0,0,0]]]:  # is Transparent
-		print("New Comparison")
+	#for comparison in [[[0,1,1,0], [1,0,0,0]]]:  # is Transparent
+	for comparison in dataset.dataFold[0][0]:
+		if debug == True:
+			print("New Comparison")
 		X = V_reverse+V_normal
 		o_i = comparison[0]
 		o_j = comparison[1]
 		o_s = o_i  # current outcome in flipping sequence
 		while X != [] and o_s != o_j:
 			Xt = X.pop(0)
-			swapVariable = CPnet.getVariable(Xt-1)  # Originally this was CPnet.getVariable(comparison[2])
+			swapVariable = CPnet.getVariable(Xt-1)  # Originally this was CPnet.getVariable(comparison[2]), where comparison[2] holds a single variable that came from some sort of calculation
+			rule = CPnet.returnRuleNewNew(swapVariable,o_s,o_j)
 
-			print("\nCurrent Var is " + str(swapVariable.id) + " with " + str(len(swapVariable.parents)) + " parents", end = "\n")
-
-			rule = CPnet.returnRuleNew(swapVariable,o_s,o_j)
-			print("Rule is:",rule)
-
-			#rule = CPnet.returnRule(swapVariable,comparison[0],comparison[1])[1:]
-			#swapVariable.updateCPTable(rule,comparison[0],swapVariable in N[n].candidateVariables,decisionMode)
+			if debug == True:
+				print("\nCurrent Var is", str(swapVariable.id), "with", str(len(swapVariable.parents)), "parents")
+				print("Rule is:",rule)
+				
 			try:
-				print("CPT_Table:", CPnet.getVariable(rule[0]).preferences)
+				if debug == True:
+					print("CPT_Table:", CPnet.getVariable(rule[0]).preferences)
 				#CPnet.fitCPNet(rule)  # This seems to check the CPTable
 				#for i in range(4):
 				#	print(CPnet.getVariable(rule[0]).preferences[i].trueRule)
 				#quit()
-				if CPnet.getVariable(rule[0]).preferences[rule[1]].trueRule == rule[2]:  # Inspired by fitCPnet function
-					pass
-				else:
+				allgood_flag = False
+				for parent in rule[1]:
+					if CPnet.fitCPNet([rule[0],parent,rule[2]]) == True:
+						allgood_flag = True
+				if allgood_flag == False:
 					raise(KeyError)
 
+				# Old way
+				# if CPnet.getVariable(rule[0]).preferences[parent].trueRule == rule[2]:
+				# if CPnet.getVariable(rule[0]).preferences[rule[1]].trueRule == rule[2]:
+
 				o_s[swapVariable.id] = o_j[swapVariable.id]
-				print(o_s)
+				if debug == True:
+					print(o_s)
 			except KeyError:
-				print("error")
+				if debug == True:
+					print("error: not in CPT")
 				pass
 
 		if o_s == o_j:
