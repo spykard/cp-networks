@@ -679,4 +679,3 @@ def transparentEntailment(CPnet,dataset,debug=False):
 			print(True)
 		else:
 			print(False)
-	quit()
