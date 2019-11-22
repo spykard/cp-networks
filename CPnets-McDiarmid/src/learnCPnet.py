@@ -4,6 +4,8 @@ import time
 from random import *
 from math import *
 
+from networkx.algorithms.dag import topological_sort
+
 def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,epsilonThreshold,nbOfParents,lenOfFold,convergence,convergenceAccuracyOnline,convergenceAccuracyOnlineLog,noise,computationTimeOnline,iterationTime,decisionMode,autorizedCycle,requiredSwapOnline):
 	N = {}
 	for n in noise:
@@ -568,7 +570,7 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 		print("We obtain the following last ONLINE learned CP-Net:")
 		# learnedCPNetOnline.displayCPNet()
 		learnedCPNetOnline[no[0]].displayCPNetInfo()
-		learnedCPNetOffline[no[0]].displayGraph()
+		learnedCPNetOffline[no[0]].create_displayGraph()
 		sum = 0
 		for i in range(len(requiredSwapOnline)):
 			sum += requiredSwapOnline[i]
@@ -582,7 +584,8 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 		# for var in learnedCPNetOffline[no[0]].variables:		
 		# 	print(var.preferences[-1].trueRule)
 		learnedCPNetOffline[no[0]].displayCPNetInfo()
-		learnedCPNetOffline[no[0]].displayGraph()
+		learnedCPNetOffline[no[0]].create_displayGraph(display=False)
+		transparentEntailment(learnedCPNetOffline[no[0]],dataset)
 		print()
 	
 	return averageCycleSize2,meanAccOnline,meanAccOnlineLog,sdAOnline,sdAOnlineLog,meanAccOffline,meanAccOfflineLog,sdAOffline,sdAOfflineLog,meanTOnline,sdTOnline,meanIT,sdIT,meanTOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,dataset.lenOfFold,dataset.numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog
@@ -619,3 +622,37 @@ def displayResults(modeForDatasetGeneration,averageCycleSize2,percentageOfNoise,
 		if offline:
 			s += "We obtain for the OFFLINE version:\n" + str(round(aOffline[0],2)) + "% of agreement *" + str(int(aOffline[0]/100*lenOfFold)) + "/" + str(lenOfFold) + " comparisons* (sd = " + str(round(sdAOffline[0],2)) + "%),:\n" + str(round(aOfflineLog[0],2)) + " of log loss (sd = " + str(round(sdAOfflineLog[0],2)) + "%),\ncomputation takes " + str(round(tOffline[0],4)) + " seconds (sd = " + str(round(sdTOffline[0],4)) + " seconds).\n"
 	return s
+
+def transparentEntailment(CPnet, dataset):
+	# NEW
+	print("\nExecuting transparent entailment module")
+	V_normal = list(topological_sort(CPnet.networkxGraph))  # Doesn't use reverse functions because they create a shallow copy not a deep copy
+	V_reverse = list(reversed(list(topological_sort(CPnet.networkxGraph))))
+
+	#for comparison in dataset.dataFold[0][0]:
+	for comparison in [[[0,1,0,0], [1,0,1,1]], [[0,1,1,0], [1,0,0,0]]]:
+		print("New Comparison")
+		X = V_reverse+V_normal
+		o_i = comparison[0]
+		o_j = comparison[1]
+		o_s = o_i  # current outcome in flipping sequence
+		while X != [] and o_s != o_j:
+			Xt = X.pop(0)
+			swapVariable = CPnet.getVariable(Xt-1)  # Originally this was CPnet.getVariable(comparison[2])
+			rule = CPnet.returnRule(swapVariable,o_s,o_j)
+			#rule = CPnet.returnRule(swapVariable,comparison[0],comparison[1])[1:]
+			#print(rule)
+			#swapVariable.updateCPTable(rule,comparison[0],swapVariable in N[n].candidateVariables,decisionMode)
+			try:
+				CPnet.fitCPNet(rule)  # This seems to check the CPTable
+				o_s[swapVariable.id] = o_j[swapVariable.id]
+				print(o_s)
+			except KeyError:
+				print("error")
+				pass
+
+		if o_s == o_j:
+			print(True)
+		else:
+			print(False)
+	quit()

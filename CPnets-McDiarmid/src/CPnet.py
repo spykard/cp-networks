@@ -16,6 +16,7 @@ class CPNet:
 		self.numberOfRules = 0
 		self.name = name
 		self.candidateVariables = []
+		self.networkxGraph = []
 		if not random:
 			self.variables = []
 		else:
@@ -254,14 +255,14 @@ class CPNet:
 		if noPreferences:
 			print("Without any preference yet.")
 		
-	def displayGraph(self):
+	def create_displayGraph(self,display=True):
 		# NEW: Converts the CP-net into a graph structure at the very final step and prints it
 		print("\nGoing to print the CP-Net in GRAPH form")
 		print("This CP-Net",self.name,"has", len(self.variables), "variable(s).")
-		G = networkx.DiGraph()
+		self.networkxGraph = networkx.DiGraph()
 		noPreferences = True
 		for var in self.variables:
-			G.add_node(var.id+1)
+			self.networkxGraph.add_node(var.id+1)
 			if var.parents == [] and var.preferences:
 				noPreferences = False
 				print("Var." + str(var.id+1), ":", var.preferences[-1].trueRule, "is preferred than", int(not(var.preferences[-1].trueRule)))
@@ -272,14 +273,15 @@ class CPNet:
 					string = "with"
 					for i,elt in enumerate(parentsVect):
 						if i < len(var.parents):
-							G.add_edge(var.parents[i].id+1, var.id+1)
+							self.networkxGraph.add_edge(var.parents[i].id+1, var.id+1)
 							string += " Var." + str(var.parents[i].id+1) + " = " + str(elt)
 					print("Var." + str(var.id+1), string, "as parents :", int(var.preferences[key].trueRule), "is preferred than", int(not(var.preferences[key].trueRule)))
 		if noPreferences:
 			print("Without any preference yet.")
 
-		networkx.draw_shell(G, with_labels=True)
-		plt.show()
+		if display == True:
+			networkx.draw_shell(self.networkxGraph, with_labels=True)
+			plt.show()
 
 	def fillCPGraph(self):
 		for var in self.variables:
@@ -317,6 +319,3 @@ class CPNet:
 		for par in flipVar.parents:
 			tab.append(outcome1[par.id])
 		return [self.variables[flipVariable(outcome1,outcome2)].id,fromBinToInt(tab),outcome1[flipVar.id]]
-
-	def transparentEntailment(self):
-		print()
