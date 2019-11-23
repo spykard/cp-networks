@@ -258,7 +258,7 @@ class CPNet:
 	def create_displayGraph(self,display=True):
 		# NEW: Converts the CP-net into a graph structure at the very final step and prints it
 		print("\nGoing to print the CP-Net in GRAPH form")
-		print("This CP-Net",self.name,"has", len(self.variables), "variable(s).")
+		print("This CP-Net",self.name,"has", len(self.variables), "variable(s)")
 		self.networkxGraph = networkx.DiGraph()
 		noPreferences = True
 		for var in self.variables:
