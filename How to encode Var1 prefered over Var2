@@ -1,9 +1,0 @@
-#Number_of_attributes 2
-#Number_of_comparisons Unknown
-#Number_of_users Unknown
-1 1,1 0
-0 0,0 1
-
-// Var2 over Var3
-0 0 1,0 0 0
-0 1 0,0 1 1
