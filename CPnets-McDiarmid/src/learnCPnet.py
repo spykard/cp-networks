@@ -632,6 +632,7 @@ def transparentEntailment(CPnet,dataset,fileName,debug=False):
 	V_normal = list(topological_sort(CPnet.networkxGraph))  # Doesn't use reverse functions because they create a shallow copy not a deep copy
 	V_reverse = list(reversed(list(topological_sort(CPnet.networkxGraph))))
 	transparently_entailed = []
+	count_total = 0
 	count_te = 0
 	count_not_te = 0
 
@@ -689,8 +690,9 @@ def transparentEntailment(CPnet,dataset,fileName,debug=False):
 				count_not_te += 1
 				if debug == True:
 					print(False)
+			count_total += 1
 	
-	print("Out of a total of", len(dataset.dataFold[0][0]), "comparisons:", count_te, "are transparently entailed,", count_not_te, "are not")
+	print("Out of a total of", count_total, "comparisons:", count_te, "are transparently entailed,", count_not_te, "are not")
 
 	# Output the transparently entailed sequences to a file
 	fileName = fileName.split('.')[0] + "_transparent.dat"
