@@ -585,7 +585,7 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 		# for var in learnedCPNetOffline[no[0]].variables:		
 		# 	print(var.preferences[-1].trueRule)
 		learnedCPNetOffline[no[0]].displayCPNetInfo()
-		learnedCPNetOffline[no[0]].create_displayGraph(display=False)
+		learnedCPNetOffline[no[0]].create_displayGraph(display=True)
 		transparentEntailment(learnedCPNetOffline[no[0]],dataset,fileName,debug=False)
 		print()
 	
