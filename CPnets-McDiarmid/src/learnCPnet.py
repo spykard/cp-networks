@@ -637,57 +637,58 @@ def transparentEntailment(CPnet,dataset,fileName,debug=False):
 
 	#for comparison in [[[0,1,0,0], [1,0,1,1]]]:  # is not Transparent
 	#for comparison in [[[0,1,1,0], [1,0,0,0]]]:  # is Transparent
-	for comparison in dataset.dataFold[0][0]:
-		if debug == True:
-			print("New Comparison")
-		X = V_reverse+V_normal
-		o_i = copy.deepcopy(comparison[0])  # note that in a following line o_i and o_j are linked directly to o_s via shallow copies not deep copies
-		o_j = copy.deepcopy(comparison[1])
-		o_s = o_i  # current outcome in flipping sequence
-		while X != [] and o_s != o_j:
-			Xt = X.pop(0)
-			swapVariable = CPnet.getVariable(Xt-1)  # Originally this was CPnet.getVariable(comparison[2]), where comparison[2] holds a single variable that came from some sort of calculation
-			rule = CPnet.returnRuleNewNew(swapVariable,o_s,o_j)
-
+	for fold in dataset.dataFold:
+		for comparison in fold[0]:
 			if debug == True:
-				print("\nCurrent Var is", str(swapVariable.id), "with", str(len(swapVariable.parents)), "parents")
-				print("Rule is:",rule)
-				
-			try:
+				print("New Comparison")
+			X = V_reverse+V_normal
+			o_i = copy.deepcopy(comparison[0])  # note that in a following line o_i and o_j are linked directly to o_s via shallow copies not deep copies
+			o_j = copy.deepcopy(comparison[1])
+			o_s = o_i  # current outcome in flipping sequence
+			while X != [] and o_s != o_j:
+				Xt = X.pop(0)
+				swapVariable = CPnet.getVariable(Xt-1)  # Originally this was CPnet.getVariable(comparison[2]), where comparison[2] holds a single variable that came from some sort of calculation
+				rule = CPnet.returnRuleNewNew(swapVariable,o_s,o_j)
+
 				if debug == True:
-					print("CPT_Table:", CPnet.getVariable(rule[0]).preferences)
+					print("\nCurrent Var is", str(swapVariable.id), "with", str(len(swapVariable.parents)), "parents")
+					print("Rule is:",rule)
+					
+				try:
+					if debug == True:
+						print("CPT_Table:", CPnet.getVariable(rule[0]).preferences)
 
-				allgood_flag = False
-				for parent in rule[1]:
-					if CPnet.fitCPNet([rule[0],parent,rule[2]]) == True:  # This seems to check the CPTable
-						allgood_flag = True
-				if allgood_flag == False:
-					raise(KeyError)
+					allgood_flag = False
+					for parent in rule[1]:
+						if CPnet.fitCPNet([rule[0],parent,rule[2]]) == True:  # This seems to check the CPTable
+							allgood_flag = True
+					if allgood_flag == False:
+						raise(KeyError)
 
-				# Old way
-				# if CPnet.getVariable(rule[0]).preferences[parent].trueRule == rule[2]:
-				# if CPnet.getVariable(rule[0]).preferences[rule[1]].trueRule == rule[2]:
+					# Old way
+					# if CPnet.getVariable(rule[0]).preferences[parent].trueRule == rule[2]:
+					# if CPnet.getVariable(rule[0]).preferences[rule[1]].trueRule == rule[2]:
 
-				#for i in range(4):
-				#	print(CPnet.getVariable(rule[0]).preferences[i].trueRule)
+					#for i in range(4):
+					#	print(CPnet.getVariable(rule[0]).preferences[i].trueRule)
 
-				o_s[swapVariable.id] = o_j[swapVariable.id]
+					o_s[swapVariable.id] = o_j[swapVariable.id]
+					if debug == True:
+						print(o_s)
+
+				except KeyError:
+					if debug == True:
+						print("error: not in CPT")
+
+			if o_s == o_j:
+				transparently_entailed.append(" ".join(map(str, comparison[0])) + "," + " ".join(map(str, comparison[1])))
+				count_te += 1
 				if debug == True:
-					print(o_s)
-
-			except KeyError:
+					print(True)
+			else:
+				count_not_te += 1
 				if debug == True:
-					print("error: not in CPT")
-
-		if o_s == o_j:
-			transparently_entailed.append(" ".join(map(str, comparison[0])) + "," + " ".join(map(str, comparison[1])))
-			count_te += 1
-			if debug == True:
-				print(True)
-		else:
-			count_not_te += 1
-			if debug == True:
-				print(False)
+					print(False)
 	
 	print("Out of a total of", len(dataset.dataFold[0][0]), "comparisons:", count_te, "are transparently entailed,", count_not_te, "are not")
 
