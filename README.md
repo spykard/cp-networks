@@ -12,6 +12,7 @@ Implemented as described in "_An empirical investigation of ceteris paribus lear
 
 Learns acyclic conditional preference networks from noisy preferences.  
 Calculates transparent entailment [1].  
+There is a batch algorithm and an online algorithm.
 User can create custom datasets by following the existing format.  
 Can generate a random database with noise.
 
@@ -22,6 +23,7 @@ movieLens Dataset (<https://grouplens.org/datasets/movielens),> each of the 19 v
 ## Practical Info
 
 On/Off Graph Printing: `Line 588:learnCPnet.py`  
+On/Off Preference Printing: `Line 588:learnCPnet.py`  
 On/Off Debug Mode: `Line 589:learnCPnet.py`  
 When creating a new dataset, how to encode Var1 prefered over Var2: `1 1,1 0` and `0 0,0 1`  
 When creating a new dataset, how to encode Var2 prefered over Var3: `0 0 1,0 0 0` and `0 1 0,0 1 1`  
