@@ -4,6 +4,7 @@ import time
 from random import *
 from math import *
 
+import copy
 from networkx.algorithms.dag import topological_sort
 
 def learningCPNetOnline(data,dataTestForConv,numberOfVar,dtBis,epsilonThreshold,nbOfParents,lenOfFold,convergence,convergenceAccuracyOnline,convergenceAccuracyOnlineLog,noise,computationTimeOnline,iterationTime,decisionMode,autorizedCycle,requiredSwapOnline):
@@ -585,7 +586,7 @@ def generalProcedure(m,fileName,numberOfComparisons,no,v,b,numberOfParents1,numb
 		# 	print(var.preferences[-1].trueRule)
 		learnedCPNetOffline[no[0]].displayCPNetInfo()
 		learnedCPNetOffline[no[0]].create_displayGraph(display=False)
-		transparentEntailment(learnedCPNetOffline[no[0]],dataset,debug=False)
+		transparentEntailment(learnedCPNetOffline[no[0]],dataset,fileName,debug=False)
 		print()
 	
 	return averageCycleSize2,meanAccOnline,meanAccOnlineLog,sdAOnline,sdAOnlineLog,meanAccOffline,meanAccOfflineLog,sdAOffline,sdAOfflineLog,meanTOnline,sdTOnline,meanIT,sdIT,meanTOffline,sdTOffline,meanAccNoiseOnline,meanAccNoiseOnlineLog,sdANoiseOnline,sdANoiseOnlineLog,meanAccNoiseOffline,meanAccNoiseOfflineLog,sdANoiseOffline,sdANoiseOfflineLog,dataset.lenOfFold,dataset.numberOfAttributes,meanConvergenceAccuracyOnline,meanConvergenceAccuracyOnlineLog,sdConvergenceAccuracyOnline,sdConvergenceAccuracyOnlineLog,meanConvergenceAccuracyOffline,meanConvergenceAccuracyOfflineLog,sdConvergenceAccuracyOffline,sdConvergenceAccuracyOfflineLog
@@ -623,13 +624,14 @@ def displayResults(modeForDatasetGeneration,averageCycleSize2,percentageOfNoise,
 			s += "We obtain for the OFFLINE version:\n" + str(round(aOffline[0],2)) + "% of agreement *" + str(int(aOffline[0]/100*lenOfFold)) + "/" + str(lenOfFold) + " comparisons* (sd = " + str(round(sdAOffline[0],2)) + "%),:\n" + str(round(aOfflineLog[0],2)) + " of log loss (sd = " + str(round(sdAOfflineLog[0],2)) + "%),\ncomputation takes " + str(round(tOffline[0],4)) + " seconds (sd = " + str(round(sdTOffline[0],4)) + " seconds).\n"
 	return s
 
-def transparentEntailment(CPnet,dataset,debug=False):
+def transparentEntailment(CPnet,dataset,fileName,debug=False):
 	# NEW: The implementation of CPnet training was done with a weird "flipping" where it flips variables left-to-right (whichever it meets first),
 	# here we perform "flipping" the correct way, but maybe the aforementioned training can affect the results
 	# rule = [variable_to_be_flipped, parent_related, current_value_to_be_changed]
 	print("\nExecuting transparent entailment module")
 	V_normal = list(topological_sort(CPnet.networkxGraph))  # Doesn't use reverse functions because they create a shallow copy not a deep copy
 	V_reverse = list(reversed(list(topological_sort(CPnet.networkxGraph))))
+	transparently_entailed = []
 
 	#for comparison in [[[0,1,0,0], [1,0,1,1]]]:  # is not Transparent
 	#for comparison in [[[0,1,1,0], [1,0,0,0]]]:  # is Transparent
@@ -637,8 +639,8 @@ def transparentEntailment(CPnet,dataset,debug=False):
 		if debug == True:
 			print("New Comparison")
 		X = V_reverse+V_normal
-		o_i = comparison[0]
-		o_j = comparison[1]
+		o_i = copy.deepcopy(comparison[0])  # note that in a following line o_i and o_j are linked directly to o_s via shallow copies not deep copies
+		o_j = copy.deepcopy(comparison[1])
 		o_s = o_i  # current outcome in flipping sequence
 		while X != [] and o_s != o_j:
 			Xt = X.pop(0)
@@ -676,6 +678,18 @@ def transparentEntailment(CPnet,dataset,debug=False):
 				pass
 
 		if o_s == o_j:
-			print(True)
+			transparently_entailed.append(" ".join(map(str, comparison[0])) + "," + " ".join(map(str, comparison[1])))
+			if debug == True:
+				print(True)
 		else:
-			print(False)
+			if debug == True:
+				print(False)
+	
+	# Output the transparently entailed sequences to a file
+	fileName = fileName.split('.')[0] + "_transparent.dat"
+	print("Outputting results to", fileName)
+	if os.path.exists(fileName) == False:
+		with open(fileName, "w") as output: 
+			print()
+	else:
+		print("Error: File already exists, results will not be outputted")
