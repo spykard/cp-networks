@@ -32,18 +32,18 @@ When creating a new dataset, how to encode Var2 prefered over Var3: `0 0 1,0 0 0
 
 On movieLensDataset_user4222 with 10-fold
 
-| numberOfParents | not Transparently Entailed | sd |Transparently Entailed | sd |
+| numberOfParents | non T.E. | sd | T.E. | sd |
 |:-|:-:|:-:|:-:|:-:|
 | 0  | 55.72 | 4.46 | 100.0 | 0.0 |
 | 1  | 54.18 | 4.75 | 100.0 | 0.0 |
 | 4  | 53.07 | 5.50 | 70.97 | 6.74 |
 | 7  | 46.92 | 5.32 | 55.89 | 6.07 |
 | 10 | 42.64 | 4.34 | 45.67 | 7.17 |
-| 13 | 40.85 | 4.31
-| 16 | 40.76 | 4.24
-| 18 | 40.76 | 4.24
+| 13 | 40.85 | 4.31 | 42.72 | 7.55 |
+| 16 | 40.76 | 4.24 | 42.46 | 7.86 |
+| 18 | 40.76 | 4.24 | 42.46 | 7.86 |
 
-<img src="https://raw.githubusercontent.com/spykard/Conditional-Preference-Networks/master/Transparent-Entailment-Experiment/movieLensDataset_user4222_6Parents_NonTE.png" width=400 alt="aaa">
+<img src="https://raw.githubusercontent.com/spykard/Conditional-Preference-Networks/master/Transparent-Entailment-Experiment/movieLensDataset_user4222_6Parents_NonTE.png" width=400>
 <img src="https://raw.githubusercontent.com/spykard/Conditional-Preference-Networks/master/Transparent-Entailment-Experiment/movieLensDataset_user4222_6Parents_TE.png" width=400>
 
 ## General Info
