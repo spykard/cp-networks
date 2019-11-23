@@ -632,6 +632,8 @@ def transparentEntailment(CPnet,dataset,fileName,debug=False):
 	V_normal = list(topological_sort(CPnet.networkxGraph))  # Doesn't use reverse functions because they create a shallow copy not a deep copy
 	V_reverse = list(reversed(list(topological_sort(CPnet.networkxGraph))))
 	transparently_entailed = []
+	count_te = 0
+	count_not_te = 0
 
 	#for comparison in [[[0,1,0,0], [1,0,1,1]]]:  # is not Transparent
 	#for comparison in [[[0,1,1,0], [1,0,0,0]]]:  # is Transparent
@@ -654,13 +656,10 @@ def transparentEntailment(CPnet,dataset,fileName,debug=False):
 			try:
 				if debug == True:
 					print("CPT_Table:", CPnet.getVariable(rule[0]).preferences)
-				#CPnet.fitCPNet(rule)  # This seems to check the CPTable
-				#for i in range(4):
-				#	print(CPnet.getVariable(rule[0]).preferences[i].trueRule)
-				#quit()
+
 				allgood_flag = False
 				for parent in rule[1]:
-					if CPnet.fitCPNet([rule[0],parent,rule[2]]) == True:
+					if CPnet.fitCPNet([rule[0],parent,rule[2]]) == True:  # This seems to check the CPTable
 						allgood_flag = True
 				if allgood_flag == False:
 					raise(KeyError)
@@ -669,27 +668,39 @@ def transparentEntailment(CPnet,dataset,fileName,debug=False):
 				# if CPnet.getVariable(rule[0]).preferences[parent].trueRule == rule[2]:
 				# if CPnet.getVariable(rule[0]).preferences[rule[1]].trueRule == rule[2]:
 
+				#for i in range(4):
+				#	print(CPnet.getVariable(rule[0]).preferences[i].trueRule)
+
 				o_s[swapVariable.id] = o_j[swapVariable.id]
 				if debug == True:
 					print(o_s)
+
 			except KeyError:
 				if debug == True:
 					print("error: not in CPT")
-				pass
 
 		if o_s == o_j:
 			transparently_entailed.append(" ".join(map(str, comparison[0])) + "," + " ".join(map(str, comparison[1])))
+			count_te += 1
 			if debug == True:
 				print(True)
 		else:
+			count_not_te += 1
 			if debug == True:
 				print(False)
 	
+	print("Out of a total of", len(dataset.dataFold[0][0]), "comparisons:", count_te, "are transparently entailed,", count_not_te, "are not")
+
 	# Output the transparently entailed sequences to a file
 	fileName = fileName.split('.')[0] + "_transparent.dat"
-	print("Outputting results to", fileName)
+	print("\nOutputting results to", fileName)
 	if os.path.exists(fileName) == False:
 		with open(fileName, "w") as output: 
-			print()
+			output.write("#Number_of_attributes " + str(len(CPnet.variables)) + "\n")
+			output.write("#Number_of_comparisons " + str(len(transparently_entailed)) + "\n")
+			output.write("#Number_of_users " + "Unknown" + "\n")
+			for te_comparison in transparently_entailed:
+				output.write(te_comparison)
+				output.write("\n")
 	else:
 		print("Error: File already exists, results will not be outputted")

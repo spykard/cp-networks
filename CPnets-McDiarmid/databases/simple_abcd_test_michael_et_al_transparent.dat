@@ -1,0 +1,13 @@
+#Number_of_attributes 4
+#Number_of_comparisons 10
+#Number_of_users Unknown
+0 1 0 0,0 0 0 0
+0 0 0 0,1 0 0 0
+0 1 0 0,1 1 0 0
+0 0 1 0,0 0 0 0
+0 0 1 0,0 0 0 0
+0 1 1 0,0 1 0 0
+1 1 1 0,1 1 0 0
+0 1 0 1,0 1 0 0
+0 0 0 1,0 0 0 0
+0 0 1 1,0 0 1 0
