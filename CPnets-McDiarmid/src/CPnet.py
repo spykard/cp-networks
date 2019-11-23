@@ -255,17 +255,20 @@ class CPNet:
 		if noPreferences:
 			print("Without any preference yet.")
 		
-	def create_displayGraph(self,display=True):
+	def create_displayGraph(self,displayPref=False,displayGraph=True):
 		# NEW: Converts the CP-net into a graph structure at the very final step and prints it
-		print("\nGoing to print the CP-Net in GRAPH form")
-		print("This CP-Net",self.name,"has", len(self.variables), "variable(s)")
+		if displayGraph == True:
+			print("\nGoing to print the CP-Net in GRAPH form")
+		if displayPref == True:
+			print("This CP-Net",self.name,"has", len(self.variables), "variable(s)")
 		self.networkxGraph = networkx.DiGraph()
 		noPreferences = True
 		for var in self.variables:
 			self.networkxGraph.add_node(var.id+1)
 			if var.parents == [] and var.preferences:
 				noPreferences = False
-				print("Var." + str(var.id+1), ":", var.preferences[-1].trueRule, "is preferred than", int(not(var.preferences[-1].trueRule)))
+				if displayPref == True:
+					print("Var." + str(var.id+1), ":", var.preferences[-1].trueRule, "is preferred than", int(not(var.preferences[-1].trueRule)))
 			if var.parents != []:
 				for key in var.preferences.keys():
 					parentsVect = fromIntToBin(key,len(var.parents))
@@ -275,11 +278,13 @@ class CPNet:
 						if i < len(var.parents):
 							self.networkxGraph.add_edge(var.parents[i].id+1, var.id+1)
 							string += " Var." + str(var.parents[i].id+1) + " = " + str(elt)
-					print("Var." + str(var.id+1), string, "as parents :", int(var.preferences[key].trueRule), "is preferred than", int(not(var.preferences[key].trueRule)))
+					if displayPref == True:
+						print("Var." + str(var.id+1), string, "as parents :", int(var.preferences[key].trueRule), "is preferred than", int(not(var.preferences[key].trueRule)))
 		if noPreferences:
-			print("Without any preference yet.")
+			if displayPref == True:			
+				print("Without any preference yet.")
 
-		if display == True:
+		if displayGraph == True:
 			networkx.draw_shell(self.networkxGraph, with_labels=True)
 			plt.show()
 
