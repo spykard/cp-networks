@@ -44,8 +44,7 @@ On movieLensDataset_user4222 with 10-fold
 | 18 | 40.76 | 4.24 | 42.46 | 7.86 |
 
 <img src="Transparent-Entailment-Experiment/movieLensDataset_user4222_6Parents_NonTE.png" width=400>
-<img src="https://raw.githubusercontent.com/spykard/Conditional-Preference-Networks/master/Transparent-Entailment-Experiment/movieLensDataset_user4222_6Parents_NonTE.png" width=400>
-<img src="https://raw.githubusercontent.com/spykard/Conditional-Preference-Networks/master/Transparent-Entailment-Experiment/movieLensDataset_user4222_6Parents_TE.png" width=400>
+<img src="Transparent-Entailment-Experiment/movieLensDataset_user4222_6Parents_TE.png" width=400>
 
 ## General Info
 
